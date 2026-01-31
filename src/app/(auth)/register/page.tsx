@@ -42,7 +42,6 @@ export default function RegisterPage() {
 
     return (
         <div className="min-h-screen bg-background-dark flex items-center justify-center p-6 relative overflow-hidden">
-            {/* Background elements */}
             <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid.svg')] opacity-[0.03] -z-10" />
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] -z-10 animate-pulse" />
             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-[120px] -z-10 animate-pulse delay-700" />

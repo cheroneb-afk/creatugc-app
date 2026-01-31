@@ -9,7 +9,6 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner"; // Assuming sonner or similar for notifications
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -28,7 +27,7 @@ export default function LoginPage() {
         });
 
         if (error) {
-            alert(error.message); // Temporary until toast is setup
+            alert(error.message);
             setIsLoading(false);
         } else {
             router.push("/dashboard");
@@ -37,7 +36,6 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen bg-background-dark flex items-center justify-center p-6 relative overflow-hidden">
-            {/* Background elements */}
             <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid.svg')] opacity-[0.03] -z-10" />
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] -z-10 animate-pulse" />
             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-[120px] -z-10 animate-pulse delay-700" />
@@ -80,7 +78,7 @@ export default function LoginPage() {
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
                                 <Label htmlFor="password">Mot de passe</Label>
-                                <Link href="/forgot-password" className="text-xs text-primary hover:underline">
+                                <Link href="/forgot-password" size="sm" className="text-xs text-primary hover:underline">
                                     Mot de passe oublié ?
                                 </Link>
                             </div>

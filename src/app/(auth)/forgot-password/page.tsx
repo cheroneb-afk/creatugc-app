@@ -34,7 +34,6 @@ export default function ForgotPasswordPage() {
 
     return (
         <div className="min-h-screen bg-background-dark flex items-center justify-center p-6 relative overflow-hidden">
-            {/* Background elements */}
             <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid.svg')] opacity-[0.03] -z-10" />
 
             <motion.div
