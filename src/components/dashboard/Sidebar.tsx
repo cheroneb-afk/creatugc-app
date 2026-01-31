@@ -16,10 +16,10 @@ import { useRouter } from "next/navigation";
 
 const navigation = [
     { name: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Mes Vidéos", href: "/videos", icon: Video },
+    { name: "Mes Vidéos", href: "/dashboard/videos", icon: Video },
     { name: "Nouvelle Commande", href: "/orders/new", icon: PlusCircle },
-    { name: "Crédits & Packs", href: "/billing", icon: CreditCard },
-    { name: "Paramètres", href: "/settings", icon: Settings },
+    { name: "Crédits & Packs", href: "#", icon: CreditCard },
+    { name: "Paramètres", href: "#", icon: Settings },
 ];
 
 export default function Sidebar() {

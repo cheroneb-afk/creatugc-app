@@ -15,7 +15,13 @@ export default function DashboardPage() {
         { name: "Commandes totales", value: "0", icon: ShoppingBag, color: "text-green-500" },
         { name: "Crédits restants", value: "0", icon: CreditCard, color: "text-secondary" },
     ]);
-    const [recentOrders, setRecentOrders] = useState<any[]>([]);
+    interface Order {
+        id: string;
+        order_number: string;
+        created_at: string;
+        status: string;
+    }
+    const [recentOrders, setRecentOrders] = useState<Order[]>([]);
 
     useEffect(() => {
         async function fetchDashboardData() {
@@ -88,7 +94,7 @@ export default function DashboardPage() {
                     <p className="text-gray-400 max-w-sm mb-8">
                         Simplifiez votre marketing avec des vidéos UGC générées par IA en quelques minutes.
                     </p>
-                    <Link href="/dashboard/new-brief">
+                    <Link href="/orders/new">
                         <Button className="px-8 py-6 rounded-2xl font-bold text-lg">
                             Commander une vidéo
                         </Button>
