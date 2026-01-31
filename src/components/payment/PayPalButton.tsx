@@ -7,7 +7,11 @@ import { useRouter } from "next/navigation";
 
 interface PayPalButtonProps {
     amount: string;
-    briefData: unknown;
+    briefData: {
+        pack_type?: string;
+        is_checkout?: boolean;
+        id?: string;
+    };
     onSuccess?: (details: unknown) => void;
 }
 
@@ -41,7 +45,14 @@ export default function PayPalButton({ amount, briefData, onSuccess }: PayPalBut
             if (capture.status === "COMPLETED") {
                 toast.success("Paiement réussi !");
                 if (onSuccess) onSuccess(capture);
-                router.push("/dashboard");
+
+                // If this is a new checkout flow (no brief yet), redirect to brief creation
+                const dbOrderId = (capture as { dbOrderId?: string }).dbOrderId;
+                if (briefData.is_checkout && dbOrderId) {
+                    router.push(`/brief/new?orderId=${dbOrderId}`);
+                } else {
+                    router.push("/dashboard");
+                }
             } else {
                 toast.error("Le paiement n'a pas pu être capturé.");
             }

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Play, Mail, Lock, User, Loader2, ArrowRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -11,11 +11,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function RegisterPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        }>
+            <RegisterContent />
+        </Suspense>
+    );
+}
+
+function RegisterContent() {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const redirect = searchParams.get("redirect");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [fullName, setFullName] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const router = useRouter();
     const supabase = createClient();
 
     const handleRegister = async (e: React.FormEvent) => {
@@ -29,6 +43,7 @@ export default function RegisterPage() {
                 data: {
                     full_name: fullName,
                 },
+                emailRedirectTo: `${window.location.origin}/auth/callback${redirect ? `?next=${redirect}` : ""}`,
             },
         });
 
@@ -36,7 +51,7 @@ export default function RegisterPage() {
             alert(error.message);
             setIsLoading(false);
         } else {
-            router.push("/login?message=Check your email to confirm your account");
+            router.push(`/login?message=Check your email to confirm your account${redirect ? `&redirect=${redirect}` : ""}`);
         }
     };
 
@@ -130,7 +145,10 @@ export default function RegisterPage() {
 
                     <footer className="mt-8 text-center text-sm">
                         <span className="text-gray-500">Déjà un compte ?</span>{" "}
-                        <Link href="/login" className="text-primary font-bold hover:underline">
+                        <Link
+                            href={`/login${redirect ? `?redirect=${redirect}` : ""}`}
+                            className="text-primary font-bold hover:underline"
+                        >
                             Se connecter
                         </Link>
                     </footer>

@@ -1,42 +1,42 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Zap, ShieldCheck, TrendingUp, Users, Video, Edit3 } from "lucide-react";
+import { Zap, ShieldCheck, TrendingUp, Users, Edit3 } from "lucide-react";
 
 const features = [
     {
-        title: "Génération IA Sora 2",
-        description: "La technologie la plus avancée au monde pour créer des vidéos indiscernables du réel.",
-        icon: Video,
+        title: "Livraison 48h-72h",
+        description: "Plus besoin d'attendre des semaines. Obtenez vos vidéos prêtes à l'emploi en un temps record.",
+        icon: Zap,
         color: "text-blue-500",
     },
     {
-        title: "Scripts Vendeurs",
-        description: "Nos scripts sont optimisés par IA pour maximiser le taux de clic et l'engagement.",
-        icon: Edit3,
+        title: "Coûts Divisés par 3",
+        description: "Notre processus optimisé nous permet de vous offrir des tarifs imbattables sans compromis sur la qualité.",
+        icon: ShieldCheck,
         color: "text-primary",
     },
     {
-        title: "Styles UGC Variés",
-        description: "Témoignages, Déballage (Unboxing), Tests produits, Styles Lifestyle et plus encore.",
-        icon: Users,
+        title: "Vidéos qui Convertissent",
+        description: "Chaque vidéo est structurée avec des hooks et des CTAs prouvés pour maximiser votre ROAS.",
+        icon: TrendingUp,
         color: "text-secondary",
     },
     {
-        title: "10x Moins Cher",
-        description: "Économisez des milliers d'euros en frais de production et d'influenceurs.",
-        icon: TrendingUp,
+        title: "Liberté Totale de Droits",
+        description: "Utilisez vos vidéos sur n'importe quelle plateforme, pour n'importe quelle durée. Aucun frais caché.",
+        icon: Users,
         color: "text-green-500",
     },
     {
-        title: "Livraison Instantanée",
-        description: "Plus besoin d'attendre des semaines. Obtenez vos vidéos en quelques heures.",
-        icon: Zap,
+        title: "Scripts Authentiques",
+        description: "Nous rédigeons des scripts qui parlent vraiment à votre audience, loin des clichés publicitaires.",
+        icon: Edit3,
         color: "text-yellow-500",
     },
     {
-        title: "Droit d'usage Total",
-        description: "Vous possédez 100% des droits sur vos vidéos pour toutes vos plateformes publicitaires.",
+        title: "Support Réactif",
+        description: "Une question ? Un ajustement ? Notre équipe est à votre disposition pour vous accompagner.",
         icon: ShieldCheck,
         color: "text-purple-500",
     },
@@ -62,7 +62,7 @@ export default function Features() {
                         transition={{ delay: 0.1 }}
                         className="text-gray-400 max-w-2xl mx-auto"
                     >
-                        Nous combinons la puissance créative de Sora 2 avec une expertise marketing pour booster vos ventes.
+                        Nous combinons expertise marketing et rapidité d&apos;exécution pour booster vos performances publicitaires.
                     </motion.p>
                 </div>
 

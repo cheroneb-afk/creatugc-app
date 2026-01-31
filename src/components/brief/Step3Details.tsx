@@ -38,7 +38,7 @@ export default function Step3Details({ data, updateData }: StepProps) {
         <div className="space-y-8">
             <div>
                 <h2 className="text-3xl font-bold mb-2">Détails & Message</h2>
-                <p className="text-gray-400 font-medium">Qu&apos;est-ce que l&apos;IA doit absolument mentionner ou éviter ?</p>
+                <p className="text-gray-400 font-medium">Qu&apos;est-ce que nos créateurs doivent absolument mentionner ou éviter ?</p>
             </div>
 
             <div className="space-y-8">

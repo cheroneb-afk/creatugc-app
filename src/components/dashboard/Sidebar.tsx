@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 const navigation = [
     { name: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard },
     { name: "Mes Vidéos", href: "/dashboard/videos", icon: Video },
-    { name: "Nouvelle Commande", href: "/orders/new", icon: PlusCircle },
+    { name: "Nouvelle Commande", href: "/#pricing", icon: PlusCircle },
     { name: "Crédits & Packs", href: "#", icon: CreditCard },
     { name: "Paramètres", href: "#", icon: Settings },
 ];

@@ -13,8 +13,17 @@ import { BriefFormData } from "@/types/brief";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import { useSearchParams, useRouter } from "next/navigation";
 
-export default function BriefForm() {
+interface BriefFormProps {
+    initialData?: Partial<BriefFormData>;
+}
+
+export default function BriefForm({ initialData }: BriefFormProps) {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const orderId = searchParams.get("orderId");
+
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState<Partial<BriefFormData>>({
         product_images: [],
@@ -23,14 +32,16 @@ export default function BriefForm() {
         must_avoid: [],
         formats: ["9:16"],
         with_subtitles: true,
+        ...initialData
     });
     const [isSaving, setIsSaving] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const updateFormData = (data: Partial<BriefFormData>) => {
         setFormData((prev) => ({ ...prev, ...data }));
     };
 
-    const nextStep = () => setStep((s) => Math.min(s + 1, 5));
+    const nextStep = () => setStep((s) => Math.min(s + 1, maxSteps));
     const prevStep = () => setStep((s) => Math.max(s - 1, 1));
 
     const handleSaveDraft = async () => {
@@ -79,8 +90,67 @@ export default function BriefForm() {
         { id: 2, name: "Style" },
         { id: 3, name: "Détails" },
         { id: 4, name: "Format" },
-        { id: 5, name: "Paiement" },
+        { id: 5, name: orderId ? "Validation" : "Paiement" },
     ];
+
+    const maxSteps = 5;
+
+    const handleSubmitBrief = async () => {
+        if (!orderId) return;
+        setIsSubmitting(true);
+
+        try {
+            const supabase = createClient();
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error("User not found");
+
+            // 1. Create/Update video_brief and link to order
+            const { data: briefData, error: briefError } = await supabase
+                .from("video_briefs")
+                .insert({
+                    user_id: user.id,
+                    order_id: orderId,
+                    product_name: formData.product_name,
+                    product_description: formData.product_description,
+                    product_images: formData.product_images,
+                    key_benefits: formData.key_benefits,
+                    video_style: formData.video_style,
+                    tone: formData.tone,
+                    target_audience: formData.target_audience,
+                    reference_video_url: formData.reference_video_url,
+                    key_message: formData.key_message,
+                    must_include: formData.must_include,
+                    must_avoid: formData.must_avoid,
+                    call_to_action: formData.call_to_action,
+                    duration: formData.duration,
+                    formats: formData.formats,
+                    with_subtitles: formData.with_subtitles,
+                    status: "paid"
+                })
+                .select()
+                .single();
+
+            if (briefError) throw briefError;
+
+            // 2. Trigger AI Generation (Call API to initialize placeholders and n8n)
+            const response = await fetch("/api/briefs/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ briefId: briefData.id, orderId }),
+            });
+
+            if (!response.ok) throw new Error("Failed to trigger generation");
+
+            toast.success("Brief soumis avec succès ! Notre équipe commence la production.");
+            router.push("/dashboard/videos");
+        } catch (error: unknown) {
+            console.error("Submit Error:", error);
+            const message = error instanceof Error ? error.message : "Erreur inconnue";
+            toast.error("Erreur lors de la soumission : " + message);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <PayPalScriptProvider options={{
@@ -164,10 +234,22 @@ export default function BriefForm() {
                             </Button>
 
                             <Button
-                                onClick={step === 5 ? () => toast.success("Utilisez le bouton PayPal ci-dessous.") : nextStep}
+                                onClick={() => {
+                                    if (step === maxSteps) {
+                                        if (orderId) {
+                                            handleSubmitBrief();
+                                        } else {
+                                            toast.success("Utilisez le bouton PayPal ci-dessous.");
+                                        }
+                                    } else {
+                                        nextStep();
+                                    }
+                                }}
+                                disabled={isSubmitting}
                                 className="bg-gradient-to-r from-primary to-secondary font-bold px-8"
                             >
-                                {step === 5 ? "Payer avec PayPal" : "Suivant"} <ChevronRight className="ml-2 w-5 h-5" />
+                                {isSubmitting ? <Loader2 className="w-4 h-4 mr-2" /> : null}
+                                {step === maxSteps ? (orderId ? "Finaliser mon brief" : "Passer au paiement") : "Suivant"} <ChevronRight className="ml-2 w-5 h-5" />
                             </Button>
                         </div>
                     </div>

@@ -6,24 +6,24 @@ import { useState } from "react";
 
 const faqs = [
     {
-        question: "Qu'est-ce qu'une vidéo UGC générée par IA ?",
-        answer: "UGC signifie 'User Generated Content'. Traditionnellement, cela implique d'envoyer vos produits à des influenceurs. Notre technologie utilise Sora 2 pour générer ces vidéos de manière photoréaliste, avec des voix et des visages humains, sans avoir besoin d'envoyer de produit physique.",
+        question: "Qu'est-ce qu'une vidéo UGC ?",
+        answer: "Le User-Generated Content (UGC) est une vidéo qui ressemble à du contenu créé par un utilisateur réel de manière authentique. C'est aujourd'hui le format le plus performant pour la publicité sur les réseaux sociaux.",
     },
     {
-        question: "Les vidéos sont-elles vraiment uniques ?",
-        answer: "Oui. Chaque brief génère des paramètres uniques pour l'IA. Vos vidéos ne seront jamais identiques à celles d'un concurrent, même pour un produit similaire.",
+        question: "En combien de temps vais-je recevoir ma commande ?",
+        answer: "Nous livrons vos vidéos en 48h à 72h ouvrées après la validation de votre brief.",
     },
     {
-        question: "Dois-je posséder les droits d'auteur ?",
-        answer: "Une fois la commande livrée et payée, vous détenez 100% des droits d'exploitation commerciale pour vos publicités Meta, TikTok, YouTube et votre site web.",
-    },
-    {
-        question: "Quel est le délai de livraison ?",
-        answer: "Le processus de génération prend généralement entre 2 et 24 heures après la soumission de votre brief détaillé.",
+        question: "Comment se passe la création des scripts ?",
+        answer: "Nos experts en copywriting rédigent les scripts en se basant sur les informations de votre brief pour s'assurer qu'ils répondent à vos objectifs de conversion.",
     },
     {
         question: "Puis-je demander des modifications ?",
-        answer: "Chaque pack inclut un certain nombre de révisions basées sur votre brief initial pour garantir que le message clé est respecté.",
+        answer: "Oui, chaque pack (sauf Solo) inclut une révision gratuite pour vous assurer que le résultat final vous convient parfaitement.",
+    },
+    {
+        question: "Ai-je les droits sur les vidéos ?",
+        answer: "Absolument. Une fois la vidéo livrée, vous disposez d'un droit d'usage total et illimité pour vos campagnes publicitaires ou vos réseaux sociaux.",
     },
 ];
 

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Play, Mail, Lock, Loader2, ArrowRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -11,10 +11,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        }>
+            <LoginContent />
+        </Suspense>
+    );
+}
+
+function LoginContent() {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const redirect = searchParams.get("redirect") || "/dashboard";
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const router = useRouter();
     const supabase = createClient();
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -30,7 +44,7 @@ export default function LoginPage() {
             alert(error.message);
             setIsLoading(false);
         } else {
-            router.push("/dashboard");
+            router.push(redirect);
         }
     };
 
@@ -113,7 +127,10 @@ export default function LoginPage() {
 
                     <footer className="mt-8 text-center text-sm">
                         <span className="text-gray-500">Pas encore de compte ?</span>{" "}
-                        <Link href="/register" className="text-primary font-bold hover:underline">
+                        <Link
+                            href={`/register${searchParams.get("redirect") ? `?redirect=${searchParams.get("redirect")}` : ""}`}
+                            className="text-primary font-bold hover:underline"
+                        >
                             S&apos;inscrire gratuitement
                         </Link>
                     </footer>

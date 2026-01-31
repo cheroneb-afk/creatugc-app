@@ -1,4 +1,4 @@
-import { Navbar, Hero, Features, Pricing, FAQ, Footer } from "@/components/landing";
+import { Navbar, Hero, Problem, Features, HowItWorks, Examples, Pricing, FAQ, Footer } from "@/components/landing";
 
 export default function Home() {
   return (
@@ -12,7 +12,10 @@ export default function Home() {
 
       <Navbar />
       <Hero />
+      <Problem />
       <Features />
+      <HowItWorks />
+      <Examples />
       <Pricing />
       <FAQ />
       <Footer />

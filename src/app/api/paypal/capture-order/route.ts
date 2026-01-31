@@ -67,6 +67,12 @@ export async function POST(req: Request) {
 
             // Send confirmation email
             await sendOrderConfirmationEmail(user.email!, orderData.order_number);
+
+            return NextResponse.json({
+                ...capture,
+                dbOrderId: orderData.id,
+                orderNumber: orderData.order_number
+            });
         }
 
         return NextResponse.json(capture);

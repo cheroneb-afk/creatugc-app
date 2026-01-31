@@ -3,19 +3,36 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Play, Menu, X } from "lucide-react";
+import { Play, Menu, X, LayoutDashboard, LogOut } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { User } from "@supabase/supabase-js";
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+    const [user, setUser] = useState<User | null>(null);
+
     useEffect(() => {
+        const supabase = createClient();
+        const getUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            setUser(user);
+        };
+        getUser();
+
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 20);
         };
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+    const handleLogout = async () => {
+        const supabase = createClient();
+        await supabase.auth.signOut();
+        window.location.reload();
+    };
 
     return (
         <nav
@@ -35,26 +52,43 @@ export default function Navbar() {
                 {/* Desktop Menu */}
                 <div className="hidden md:flex items-center space-x-8">
                     <Link href="#features" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
-                        Fonctionnement
+                        Comment ça marche
                     </Link>
                     <Link href="#pricing" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
                         Tarifs
                     </Link>
-                    <Link href="#faq" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
-                        FAQ
-                    </Link>
-                    <Link
-                        href="/login"
-                        className="text-sm font-medium px-5 py-2 rounded-full border border-white/10 hover:bg-white/5 transition-all"
-                    >
-                        Connexion
-                    </Link>
-                    <Link
-                        href="/register"
-                        className="text-sm font-medium px-5 py-2 rounded-full bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 transition-all shadow-lg shadow-primary/20"
-                    >
-                        Essayer Gratuitement
-                    </Link>
+                    {user ? (
+                        <>
+                            <Link
+                                href="/dashboard"
+                                className="text-sm font-medium px-5 py-2 rounded-full border border-white/10 hover:bg-white/5 transition-all flex items-center gap-2"
+                            >
+                                <LayoutDashboard className="w-4 h-4" />
+                                Dashboard
+                            </Link>
+                            <button
+                                onClick={handleLogout}
+                                className="text-sm font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-2"
+                            >
+                                <LogOut className="w-4 h-4" />
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <Link
+                                href="/login"
+                                className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                            >
+                                Connexion
+                            </Link>
+                            <Link
+                                href="#pricing"
+                                className="text-sm font-medium px-5 py-2 rounded-full bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 transition-all shadow-lg shadow-primary/20"
+                            >
+                                Commander
+                            </Link>
+                        </>
+                    )}
                 </div>
 
                 {/* Mobile Toggle */}
@@ -71,21 +105,46 @@ export default function Navbar() {
                     className="md:hidden glass absolute top-full left-0 right-0 p-6 flex flex-col space-y-4 border-t border-white/10"
                 >
                     <Link href="#features" className="text-lg font-medium" onClick={() => setIsMobileMenuOpen(false)}>
-                        Fonctionnement
+                        Comment ça marche
                     </Link>
                     <Link href="#pricing" className="text-lg font-medium" onClick={() => setIsMobileMenuOpen(false)}>
                         Tarifs
                     </Link>
-                    <Link href="/login" className="text-lg font-medium" onClick={() => setIsMobileMenuOpen(false)}>
-                        Connexion
-                    </Link>
-                    <Link
-                        href="/register"
-                        className="text-center bg-gradient-to-r from-primary to-secondary py-3 rounded-xl font-bold"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                        Démarrer
-                    </Link>
+                    {user ? (
+                        <>
+                            <Link
+                                href="/dashboard"
+                                className="text-lg font-medium flex items-center gap-2"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                <LayoutDashboard className="w-5 h-5" />
+                                Dashboard
+                            </Link>
+                            <button
+                                onClick={() => {
+                                    handleLogout();
+                                    setIsMobileMenuOpen(false);
+                                }}
+                                className="text-lg font-medium text-left text-gray-400 flex items-center gap-2"
+                            >
+                                <LogOut className="w-5 h-5" />
+                                Déconnexion
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <Link href="/login" className="text-lg font-medium" onClick={() => setIsMobileMenuOpen(false)}>
+                                Connexion
+                            </Link>
+                            <Link
+                                href="#pricing"
+                                className="text-center bg-gradient-to-r from-primary to-secondary py-3 rounded-xl font-bold"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                Commander
+                            </Link>
+                        </>
+                    )}
                 </motion.div>
             )}
         </nav>

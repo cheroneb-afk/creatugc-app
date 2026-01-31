@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Play, Sparkles, ArrowRight, Video } from "lucide-react";
+import { Play, ArrowRight, Video } from "lucide-react";
 import Link from "next/link";
 
 export default function Hero() {
@@ -20,9 +20,8 @@ export default function Hero() {
                     transition={{ duration: 0.5 }}
                     className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full glass border-white/10 mb-8"
                 >
-                    <Sparkles className="w-4 h-4 text-secondary" />
                     <span className="text-xs font-semibold tracking-wide uppercase text-gray-300">
-                        Propulsé par Sora 2 & Sora AI
+                        +150 marques nous font confiance
                     </span>
                 </motion.div>
 
@@ -32,8 +31,7 @@ export default function Hero() {
                     transition={{ duration: 0.5, delay: 0.1 }}
                     className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-8 leading-[1.1]"
                 >
-                    Des Vidéos <span className="text-gradient">UGC Illimitées</span> <br className="hidden md:block" /> En
-                    Quelques Minutes
+                    Des vidéos <span className="text-gradient">UGC qui convertissent</span>, <br className="hidden md:block" /> livrées en 48h
                 </motion.h1>
 
                 <motion.p
@@ -42,8 +40,7 @@ export default function Hero() {
                     transition={{ duration: 0.5, delay: 0.2 }}
                     className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed"
                 >
-                    Boostez vos conversions avec des vidéos UGC générées par IA qui ressemblent à du vrai contenu humain. 10x
-                    moins cher, 100x plus rapide.
+                    Obtenez des vidéos authentiques pour vos publicités Meta & TikTok, sans les délais et les coûts d&apos;un créateur traditionnel.
                 </motion.p>
 
                 <motion.div
@@ -53,12 +50,12 @@ export default function Hero() {
                     className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6"
                 >
                     <Link
-                        href="/register"
+                        href="#pricing"
                         className="group relative px-8 py-4 rounded-2xl bg-gradient-to-r from-primary to-secondary text-white font-bold text-lg shadow-xl shadow-primary/25 hover:scale-105 transition-all duration-300 overflow-hidden"
                     >
                         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                         <span className="relative flex items-center">
-                            Lancer ma campagne <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            Voir les tarifs <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </span>
                     </Link>
                     <Link
@@ -66,7 +63,7 @@ export default function Hero() {
                         className="flex items-center space-x-2 px-8 py-4 rounded-2xl glass hover:bg-white/5 transition-all font-bold text-lg"
                     >
                         <Play className="w-5 h-5 fill-white" />
-                        <span>Voir les démos</span>
+                        <span>Voir des exemples</span>
                     </Link>
                 </motion.div>
 
@@ -82,15 +79,15 @@ export default function Hero() {
                             {/* Image Placeholder with prompt style */}
                             <div className="absolute inset-0 bg-slate-800 animate-pulse flex flex-col items-center justify-center text-gray-500">
                                 <Video className="w-16 h-16 mb-4 opacity-20" />
-                                <span className="text-sm font-medium tracking-widest uppercase opacity-40">Awaiting Sora 2 Generation...</span>
+                                <span className="text-sm font-medium tracking-widest uppercase opacity-40">CreatUGC Production en cours...</span>
                             </div>
                             <div className="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent opacity-60" />
                             <div className="absolute bottom-6 left-6 text-left">
                                 <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-widest text-secondary mb-2">
                                     <div className="w-2 h-2 rounded-full bg-secondary animate-ping" />
-                                    <span>Prompt: Testimonial Video For Beauty...</span>
+                                    <span>Vidéo Témoignage Produit...</span>
                                 </div>
-                                <h3 className="text-xl font-bold">Générez n&apos;importe quel style de vidéo UGC instantanément.</h3>
+                                <h3 className="text-xl font-bold">Générez n&apos;importe quel style de vidéo UGC pour votre marque.</h3>
                             </div>
                         </div>
                     </div>

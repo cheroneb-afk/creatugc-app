@@ -4,6 +4,7 @@ import { BriefFormData } from "@/types/brief";
 import { Check, Star, Video, Palette, MessageSquare, Maximize } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useSearchParams } from "next/navigation";
 import PayPalButton from "../payment/PayPalButton";
 
 interface StepProps {
@@ -12,6 +13,9 @@ interface StepProps {
 }
 
 export default function Step5Review({ data, updateData }: StepProps) {
+    const searchParams = useSearchParams();
+    const orderId = searchParams.get("orderId");
+
     const packs = [
         { id: "solo", name: "Solo", price: "179", videos: 1 },
         { id: "starter", name: "Starter", price: "640", videos: 4 },
@@ -22,8 +26,12 @@ export default function Step5Review({ data, updateData }: StepProps) {
     return (
         <div className="space-y-8">
             <div>
-                <h2 className="text-3xl font-bold mb-2">Récapitulatif & Choix du Pack</h2>
-                <p className="text-gray-400 font-medium">Vérifiez vos informations et sélectionnez votre offre.</p>
+                <h2 className="text-3xl font-bold mb-2">
+                    {orderId ? "Vérification de votre commande" : "Récapitulatif & Choix du Pack"}
+                </h2>
+                <p className="text-gray-400 font-medium">
+                    {orderId ? "Vérifiez vos informations avant de finaliser votre brief." : "Vérifiez vos informations et sélectionnez votre offre."}
+                </p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -59,15 +67,15 @@ export default function Step5Review({ data, updateData }: StepProps) {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 ${orderId ? "opacity-50 pointer-events-none" : ""}`}>
                         {packs.map((pack) => (
                             <div
                                 key={pack.id}
-                                onClick={() => updateData({ pack_type: pack.id })}
-                                className={`p-6 rounded-2xl border cursor-pointer transition-all relative ${data.pack_type === pack.id
+                                onClick={() => !orderId && updateData({ pack_type: pack.id })}
+                                className={`p-6 rounded-2xl border transition-all relative ${data.pack_type === pack.id
                                     ? "bg-primary/10 border-primary ring-1 ring-primary"
                                     : "bg-white/5 border-white/5 hover:bg-white/10"
-                                    }`}
+                                    } ${orderId ? "cursor-default" : "cursor-pointer"}`}
                             >
                                 {pack.recommended && (
                                     <Star className="absolute top-4 right-4 w-4 h-4 text-secondary fill-secondary" />
@@ -116,12 +124,22 @@ export default function Step5Review({ data, updateData }: StepProps) {
                             </div>
                             <p className="text-[10px] text-gray-500 text-center italic">Le paiement est sécurisé par PayPal.</p>
 
-                            {data.pack_type && (
+                            {!orderId && data.pack_type && (
                                 <div className="mt-6 pt-6 border-t border-white/10">
                                     <PayPalButton
                                         amount={(Number(packs.find(p => p.id === data.pack_type)?.price || 0) * 1.2).toFixed(2)}
                                         briefData={data}
                                     />
+                                </div>
+                            )}
+                            {orderId && (
+                                <div className="mt-6 pt-6 border-t border-white/10 text-center">
+                                    <p className="text-xs text-green-500 font-bold mb-2 flex items-center justify-center">
+                                        <Check className="w-4 h-4 mr-1" /> Commande payée
+                                    </p>
+                                    <p className="text-[10px] text-gray-500 italic">
+                                        Cliquez sur le bouton ci-dessous pour finaliser votre brief.
+                                    </p>
                                 </div>
                             )}
                         </div>

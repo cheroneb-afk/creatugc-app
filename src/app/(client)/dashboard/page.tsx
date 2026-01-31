@@ -92,9 +92,9 @@ export default function DashboardPage() {
                     </div>
                     <h3 className="text-xl font-bold mb-2">Lancez une nouvelle campagne</h3>
                     <p className="text-gray-400 max-w-sm mb-8">
-                        Simplifiez votre marketing avec des vidéos UGC générées par IA en quelques minutes.
+                        Simplifiez votre marketing avec des vidéos UGC authentiques livrées en un temps record.
                     </p>
-                    <Link href="/orders/new">
+                    <Link href="/#pricing">
                         <Button className="px-8 py-6 rounded-2xl font-bold text-lg">
                             Commander une vidéo
                         </Button>

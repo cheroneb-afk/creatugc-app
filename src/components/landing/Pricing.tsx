@@ -10,7 +10,7 @@ const packs = [
         price: "179",
         videos: "1",
         pricePerVideo: "179",
-        features: ["1 Vidéo UGC (15-60s)", "Format au choix", "Script IA inclus", "Droit d'usage total", "Livraison 24-48h"],
+        features: ["Livraison 48-72h", "3 formats inclus", "Sous-titres inclus", "1 révision gratuite", "Droits commerciaux complets"],
         recommended: false,
     },
     {
@@ -18,7 +18,7 @@ const packs = [
         price: "640",
         videos: "4",
         pricePerVideo: "160",
-        features: ["4 Vidéos UGC", "Mix de formats", "Hooks A/B Testing", "Scripts optimisés", "Priorité Standard"],
+        features: ["Livraison 48-72h", "3 formats inclus", "Sous-titres inclus", "1 révision gratuite", "Droits commerciaux complets"],
         recommended: false,
     },
     {
@@ -26,7 +26,7 @@ const packs = [
         price: "750",
         videos: "5",
         pricePerVideo: "150",
-        features: ["5 Vidéos UGC", "Tous formats inclus", "Hooks illimités", "Stratégie de contenu", "Support Prioritaire"],
+        features: ["Livraison 48-72h", "3 formats inclus", "Sous-titres inclus", "1 révision gratuite", "Droits commerciaux complets"],
         recommended: true,
     },
     {
@@ -34,7 +34,7 @@ const packs = [
         price: "1400",
         videos: "10",
         pricePerVideo: "140",
-        features: ["10 Vidéos UGC", "Parfait pour Scaler", "Gestionnaire dédié", "Intégration API", "White-label possible"],
+        features: ["Livraison 48-72h", "3 formats inclus", "Sous-titres inclus", "1 révision gratuite", "Droits commerciaux complets"],
         recommended: false,
     },
 ];
@@ -60,7 +60,7 @@ export default function Pricing() {
                         transition={{ delay: 0.1 }}
                         className="text-gray-400 max-w-2xl mx-auto"
                     >
-                        Choisissez le pack qui correspond à vos besoins et commencez à générer du contenu UGC dès aujourd&apos;hui.
+                        Des tarifs transparents, sans surprise. Choisissez le pack qui correspond à votre ambition.
                     </motion.p>
                 </div>
 
@@ -88,7 +88,7 @@ export default function Pricing() {
                                     <span className="text-4xl font-black">{pack.price}€</span>
                                     <span className="text-gray-400 ml-2 font-medium">HT</span>
                                 </div>
-                                <p className="text-sm text-gray-500 font-medium">{pack.videos} Vidéos ({pack.pricePerVideo}€/vid)</p>
+                                <p className="text-sm text-gray-500 font-medium">{pack.videos} {parseInt(pack.videos) > 1 ? "Vidéos" : "Vidéo"} ({pack.pricePerVideo}€/vid)</p>
                             </div>
 
                             <div className="space-y-4 mb-10 flex-grow">
@@ -103,13 +103,13 @@ export default function Pricing() {
                             </div>
 
                             <Link
-                                href="/register"
+                                href={`/checkout?pack=${pack.name.toLowerCase()}`}
                                 className={`w-full py-4 rounded-xl font-bold text-center transition-all ${pack.recommended
                                     ? "bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 shadow-lg shadow-primary/20"
                                     : "bg-white/5 text-white hover:bg-white/10 border border-white/10"
                                     }`}
                             >
-                                Commander maintenant
+                                Commander
                             </Link>
                         </motion.div>
                     ))}
