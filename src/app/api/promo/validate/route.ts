@@ -6,7 +6,7 @@ export async function POST(req: Request) {
         const { code } = await req.json();
         const result = await validatePromoCode(code);
         return NextResponse.json(result);
-    } catch (error) {
+    } catch {
         return NextResponse.json({ valid: false, message: "Erreur serveur." }, { status: 500 });
     }
 }

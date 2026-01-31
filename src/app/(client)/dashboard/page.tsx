@@ -1,13 +1,62 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Video, ShoppingBag, CreditCard, Sparkles } from "lucide-react";
+import { Video, ShoppingBag, CreditCard, Sparkles, Loader2, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function DashboardPage() {
-    const stats = [
+    const [loading, setLoading] = useState(true);
+    const [stats, setStats] = useState([
         { name: "Vidéos commandées", value: "0", icon: Video, color: "text-blue-500" },
         { name: "En cours", value: "0", icon: Sparkles, color: "text-primary" },
         { name: "Commandes totales", value: "0", icon: ShoppingBag, color: "text-green-500" },
-        { name: "Crédits restants", value: "10", icon: CreditCard, color: "text-secondary" },
-    ];
+        { name: "Crédits restants", value: "0", icon: CreditCard, color: "text-secondary" },
+    ]);
+    const [recentOrders, setRecentOrders] = useState<any[]>([]);
+
+    useEffect(() => {
+        async function fetchDashboardData() {
+            const supabase = createClient();
+            const { data: { user } } = await supabase.auth.getUser();
+
+            if (user) {
+                // Fetch stats
+                const { data: orders } = await supabase
+                    .from("orders")
+                    .select("*")
+                    .eq("user_id", user.id);
+
+                if (orders) {
+                    const totalOrders = orders.length;
+                    const processingOrders = orders.filter(o => o.status === "processing").length;
+                    const completedVideos = orders.filter(o => o.status === "completed").length;
+
+                    setStats([
+                        { name: "Vidéos commandées", value: completedVideos.toString(), icon: Video, color: "text-blue-500" },
+                        { name: "En cours", value: processingOrders.toString(), icon: Sparkles, color: "text-primary" },
+                        { name: "Commandes totales", value: totalOrders.toString(), icon: ShoppingBag, color: "text-green-500" },
+                        { name: "Crédits restants", value: "10", icon: CreditCard, color: "text-secondary" }, // Assuming 10 for now or fetch from user profile
+                    ]);
+
+                    setRecentOrders(orders.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5));
+                }
+            }
+            setLoading(false);
+        }
+
+        fetchDashboardData();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -35,20 +84,51 @@ export default function DashboardPage() {
                     <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-6">
                         <Video className="w-8 h-8 text-gray-600" />
                     </div>
-                    <h3 className="text-xl font-bold mb-2">Aucune vidéo pour le moment</h3>
+                    <h3 className="text-xl font-bold mb-2">Lancez une nouvelle campagne</h3>
                     <p className="text-gray-400 max-w-sm mb-8">
-                        Lancez votre première commande pour voir vos vidéos apparaître ici.
+                        Simplifiez votre marketing avec des vidéos UGC générées par IA en quelques minutes.
                     </p>
-                    <button className="px-6 py-2.5 bg-primary text-white font-bold rounded-xl hover:opacity-90 transition-all">
-                        Commander ma première vidéo
-                    </button>
+                    <Link href="/dashboard/new-brief">
+                        <Button className="px-8 py-6 rounded-2xl font-bold text-lg">
+                            Commander une vidéo
+                        </Button>
+                    </Link>
                 </Card>
 
                 <Card className="glass-card border-white/5 p-8 min-h-[300px]">
                     <h3 className="text-xl font-bold mb-6">Dernières commandes</h3>
-                    <div className="flex flex-col items-center justify-center h-full pb-10 text-gray-500 text-sm italic">
-                        Aucun historique disponible.
-                    </div>
+                    {recentOrders.length > 0 ? (
+                        <div className="space-y-4">
+                            {recentOrders.map((order) => (
+                                <Link
+                                    key={order.id}
+                                    href={`/dashboard/orders/${order.id}`}
+                                    className="flex items-center justify-between p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-all border border-white/5"
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                                            <ShoppingBag className="w-5 h-5 text-primary" />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-sm">{order.order_number}</p>
+                                            <p className="text-xs text-gray-500">{new Date(order.created_at).toLocaleDateString()}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <span className={`text-[10px] px-2 py-1 rounded-full font-bold uppercase ${order.status === 'completed' ? 'bg-green-500/10 text-green-500' : 'bg-primary/10 text-primary'
+                                            }`}>
+                                            {order.status}
+                                        </span>
+                                        <ArrowRight className="w-4 h-4 text-gray-600" />
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center h-full pb-10 text-gray-500 text-sm italic">
+                            Aucun historique disponible.
+                        </div>
+                    )}
                 </Card>
             </div>
         </div>

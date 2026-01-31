@@ -90,7 +90,7 @@ export default function Hero() {
                                     <div className="w-2 h-2 rounded-full bg-secondary animate-ping" />
                                     <span>Prompt: Testimonial Video For Beauty...</span>
                                 </div>
-                                <h3 className="text-xl font-bold">Générez n'importe quel style de vidéo UGC instantanément.</h3>
+                                <h3 className="text-xl font-bold">Générez n&apos;importe quel style de vidéo UGC instantanément.</h3>
                             </div>
                         </div>
                     </div>

@@ -9,7 +9,7 @@ export async function uploadProductImages(files: File[], userId: string) {
         const fileName = `${userId}/${Math.random()}.${fileExt}`;
         const filePath = `${fileName}`;
 
-        const { error: uploadError, data } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
             .from("product-images")
             .upload(filePath, file);
 

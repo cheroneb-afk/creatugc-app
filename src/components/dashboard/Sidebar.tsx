@@ -9,8 +9,7 @@ import {
     Settings,
     LogOut,
     Play,
-    CreditCard,
-    Bell
+    CreditCard
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -54,8 +53,8 @@ export default function Sidebar() {
                             key={item.name}
                             href={item.href}
                             className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${isActive
-                                    ? "bg-primary/10 text-primary border border-primary/20"
-                                    : "text-gray-400 hover:text-white hover:bg-white/5"
+                                ? "bg-primary/10 text-primary border border-primary/20"
+                                : "text-gray-400 hover:text-white hover:bg-white/5"
                                 }`}
                         >
                             <item.icon className="w-5 h-5" />

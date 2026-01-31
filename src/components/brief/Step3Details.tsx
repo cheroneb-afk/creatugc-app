@@ -38,7 +38,7 @@ export default function Step3Details({ data, updateData }: StepProps) {
         <div className="space-y-8">
             <div>
                 <h2 className="text-3xl font-bold mb-2">Détails & Message</h2>
-                <p className="text-gray-400 font-medium">Qu'est-ce que l'IA doit absolument mentionner ou éviter ?</p>
+                <p className="text-gray-400 font-medium">Qu&apos;est-ce que l&apos;IA doit absolument mentionner ou éviter ?</p>
             </div>
 
             <div className="space-y-8">
@@ -57,7 +57,7 @@ export default function Step3Details({ data, updateData }: StepProps) {
 
                     <div className="space-y-4">
                         <Label className="flex items-center text-secondary uppercase text-xs font-black tracking-widest">
-                            L'Appel à l'Action (CTA)
+                            L&apos;Appel à l&apos;Action (CTA)
                         </Label>
                         <Input
                             placeholder="Ex: Commandez maintenant et -15% !"
@@ -65,7 +65,7 @@ export default function Step3Details({ data, updateData }: StepProps) {
                             value={data.call_to_action || ""}
                             onChange={(e) => updateData({ call_to_action: e.target.value })}
                         />
-                        <p className="text-[10px] text-gray-500 italic">C'est la phrase finale qui déclenche l'achat.</p>
+                        <p className="text-[10px] text-gray-500 italic">C&apos;est la phrase finale qui déclenche l&apos;achat.</p>
                     </div>
                 </div>
 

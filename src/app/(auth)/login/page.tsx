@@ -78,7 +78,7 @@ export default function LoginPage() {
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
                                 <Label htmlFor="password">Mot de passe</Label>
-                                <Link href="/forgot-password" size="sm" className="text-xs text-primary hover:underline">
+                                <Link href="/forgot-password" title="Mot de passe oublié ?" className="text-xs text-primary hover:underline">
                                     Mot de passe oublié ?
                                 </Link>
                             </div>
@@ -114,7 +114,7 @@ export default function LoginPage() {
                     <footer className="mt-8 text-center text-sm">
                         <span className="text-gray-500">Pas encore de compte ?</span>{" "}
                         <Link href="/register" className="text-primary font-bold hover:underline">
-                            S'inscrire gratuitement
+                            S&apos;inscrire gratuitement
                         </Link>
                     </footer>
                 </div>

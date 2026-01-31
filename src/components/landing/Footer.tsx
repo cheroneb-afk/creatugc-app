@@ -16,7 +16,7 @@ export default function Footer() {
                             </span>
                         </Link>
                         <p className="text-gray-500 text-sm leading-relaxed">
-                            La plateforme n°1 de génération de vidéos UGC par intelligence artificielle pour l'e-commerce.
+                            La plateforme n&apos;1 de génération de vidéos UGC par intelligence artificielle pour l&apos;e-commerce.
                         </p>
                     </div>
 

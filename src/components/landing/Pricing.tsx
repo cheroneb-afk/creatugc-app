@@ -60,7 +60,7 @@ export default function Pricing() {
                         transition={{ delay: 0.1 }}
                         className="text-gray-400 max-w-2xl mx-auto"
                     >
-                        Choisissez le pack qui correspond à vos besoins et commencez à générer du contenu UGC dès aujourd'hui.
+                        Choisissez le pack qui correspond à vos besoins et commencez à générer du contenu UGC dès aujourd&apos;hui.
                     </motion.p>
                 </div>
 
@@ -105,8 +105,8 @@ export default function Pricing() {
                             <Link
                                 href="/register"
                                 className={`w-full py-4 rounded-xl font-bold text-center transition-all ${pack.recommended
-                                        ? "bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 shadow-lg shadow-primary/20"
-                                        : "bg-white/5 text-white hover:bg-white/10 border border-white/10"
+                                    ? "bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 shadow-lg shadow-primary/20"
+                                    : "bg-white/5 text-white hover:bg-white/10 border border-white/10"
                                     }`}
                             >
                                 Commander maintenant

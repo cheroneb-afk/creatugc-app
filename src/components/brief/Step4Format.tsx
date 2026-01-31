@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { BriefFormData, DURATIONS, FORMATS } from "@/types/brief";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
-import { Clock, Square, Maximize, Subtitles } from "lucide-react";
+import { Clock, Square, Maximize } from "lucide-react";
 
 interface StepProps {
     data: Partial<BriefFormData>;
@@ -40,8 +40,8 @@ export default function Step4Format({ data, updateData }: StepProps) {
                                     key={d.id}
                                     onClick={() => updateData({ duration: d.id })}
                                     className={`py-4 rounded-xl border text-sm font-bold transition-all ${data.duration === d.id
-                                            ? "bg-primary border-primary text-white shadow-lg shadow-primary/20"
-                                            : "border-white/10 text-gray-400 bg-white/5 hover:bg-white/10"
+                                        ? "bg-primary border-primary text-white shadow-lg shadow-primary/20"
+                                        : "border-white/10 text-gray-400 bg-white/5 hover:bg-white/10"
                                         }`}
                                 >
                                     {d.label.split(" ")[0]} s
@@ -77,8 +77,8 @@ export default function Step4Format({ data, updateData }: StepProps) {
                                 key={f.id}
                                 onClick={() => toggleFormat(f.id)}
                                 className={`flex items-center justify-between p-5 rounded-2xl border cursor-pointer transition-all ${data.formats?.includes(f.id)
-                                        ? "bg-blue-500/10 border-blue-500 text-white"
-                                        : "bg-white/5 border-white/10 text-gray-400 hover:bg-white/10"
+                                    ? "bg-blue-500/10 border-blue-500 text-white"
+                                    : "bg-white/5 border-white/10 text-gray-400 hover:bg-white/10"
                                     }`}
                             >
                                 <div className="flex items-center space-x-4">

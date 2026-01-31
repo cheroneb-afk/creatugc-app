@@ -4,6 +4,7 @@ import { BriefFormData } from "@/types/brief";
 import { Check, Star, Video, Palette, MessageSquare, Maximize } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import PayPalButton from "../payment/PayPalButton";
 
 interface StepProps {
     data: Partial<BriefFormData>;
@@ -113,7 +114,16 @@ export default function Step5Review({ data, updateData }: StepProps) {
                                 <Input placeholder="Code Promo" className="bg-white/5 border-white/10 pr-20" />
                                 <Button variant="ghost" className="absolute right-1 top-1 h-8 text-xs font-bold text-primary hover:bg-primary/10">Appliquer</Button>
                             </div>
-                            <p className="text-[10px] text-gray-500 text-center italic">Le paiement est sécurisé par Stripe & PayPal.</p>
+                            <p className="text-[10px] text-gray-500 text-center italic">Le paiement est sécurisé par PayPal.</p>
+
+                            {data.pack_type && (
+                                <div className="mt-6 pt-6 border-t border-white/10">
+                                    <PayPalButton
+                                        amount={(Number(packs.find(p => p.id === data.pack_type)?.price || 0) * 1.2).toFixed(2)}
+                                        briefData={data}
+                                    />
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

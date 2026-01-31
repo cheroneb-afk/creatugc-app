@@ -1,11 +1,12 @@
 "use client";
 
+import NextImage from "next/image";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { BriefFormData } from "@/types/brief";
-import { Plus, X, Upload, Image as ImageIcon } from "lucide-react";
+import { Plus, X, Upload } from "lucide-react";
 import { uploadProductImages } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
@@ -37,7 +38,7 @@ export default function Step1Product({ data, updateData }: StepProps) {
             const urls = await uploadProductImages(Array.from(files), user.id);
             updateData({ product_images: [...(data.product_images || []), ...urls] });
             toast.success(`${urls.length} images ajoutées.`);
-        } catch (err) {
+        } catch {
             toast.error("Erreur lors de l'upload.");
         } finally {
             setIsUploading(false);
@@ -121,10 +122,15 @@ export default function Step1Product({ data, updateData }: StepProps) {
                     <div className="grid grid-cols-2 gap-4">
                         {(data.product_images || []).map((url, idx) => (
                             <div key={idx} className="relative aspect-square glass rounded-2xl overflow-hidden group border border-white/10">
-                                <img src={url} alt="Product" className="w-full h-full object-cover" />
+                                <NextImage
+                                    src={url}
+                                    alt="Product"
+                                    fill
+                                    className="object-cover"
+                                />
                                 <button
                                     onClick={() => updateData({ product_images: data.product_images?.filter((_, i) => i !== idx) })}
-                                    className="absolute top-2 right-2 bg-black/50 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                                    className="absolute top-2 right-2 bg-black/50 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-10"
                                 >
                                     <X className="w-4 h-4 text-white" />
                                 </button>
