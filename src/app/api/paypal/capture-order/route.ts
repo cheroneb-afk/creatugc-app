@@ -40,11 +40,28 @@ export async function POST(req: Request) {
                     status: "paid"
                 }).eq("id", briefData.id).select().single();
 
+                // Create video placeholders in generated_videos
+                const videoCount = orderData.video_count || 1;
+                const placeholders = Array.from({ length: videoCount }).map(() => ({
+                    user_id: user.id,
+                    brief_id: updatedBrief.id,
+                    status: "processing",
+                    format: updatedBrief.formats?.[0] || "9:16", // Default to first format or 9:16
+                }));
+
+                const { data: generatedVideos, error: genError } = await supabase
+                    .from("generated_videos")
+                    .insert(placeholders)
+                    .select();
+
+                if (genError) console.error("Error creating video placeholders:", genError);
+
                 // Trigger n8n workflow for video generation
                 await triggerN8NWorkflow({
                     order: orderData,
                     brief: updatedBrief,
-                    user: user
+                    user: user,
+                    video_placeholders: generatedVideos || []
                 });
             }
 
