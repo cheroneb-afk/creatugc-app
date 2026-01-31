@@ -2,6 +2,8 @@
 
 import { BriefFormData } from "@/types/brief";
 import { Check, Star, Video, Palette, MessageSquare, Maximize } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface StepProps {
     data: Partial<BriefFormData>;
@@ -62,8 +64,8 @@ export default function Step5Review({ data, updateData }: StepProps) {
                                 key={pack.id}
                                 onClick={() => updateData({ pack_type: pack.id })}
                                 className={`p-6 rounded-2xl border cursor-pointer transition-all relative ${data.pack_type === pack.id
-                                        ? "bg-primary/10 border-primary ring-1 ring-primary"
-                                        : "bg-white/5 border-white/5 hover:bg-white/10"
+                                    ? "bg-primary/10 border-primary ring-1 ring-primary"
+                                    : "bg-white/5 border-white/5 hover:bg-white/10"
                                     }`}
                             >
                                 {pack.recommended && (
