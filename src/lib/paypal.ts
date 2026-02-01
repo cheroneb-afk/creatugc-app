@@ -1,11 +1,24 @@
-const PAYPAL_API = process.env.NODE_ENV === 'production'
+// Use PAYPAL_MODE env var to explicitly control sandbox vs production
+// Default to sandbox for safety
+const PAYPAL_MODE = process.env.PAYPAL_MODE || 'sandbox';
+const PAYPAL_API = PAYPAL_MODE === 'production'
     ? "https://api-m.paypal.com"
     : "https://api-m.sandbox.paypal.com";
 
 export async function getAccessToken() {
-    const auth = Buffer.from(
-        process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID + ":" + process.env.PAYPAL_CLIENT_SECRET
-    ).toString("base64");
+    const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+    const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
+
+    if (!clientId || !clientSecret) {
+        console.error("PayPal credentials missing:", {
+            hasClientId: !!clientId,
+            hasClientSecret: !!clientSecret,
+            mode: PAYPAL_MODE
+        });
+        throw new Error("PayPal credentials not configured");
+    }
+
+    const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
 
     const response = await fetch(`${PAYPAL_API}/v1/oauth2/token`, {
         method: "POST",
@@ -15,6 +28,12 @@ export async function getAccessToken() {
             "Content-Type": "application/x-www-form-urlencoded",
         },
     });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        console.error("PayPal auth failed:", { status: response.status, error: errorText });
+        throw new Error(`PayPal authentication failed: ${response.status}`);
+    }
 
     const data = await response.json();
     return data.access_token;
