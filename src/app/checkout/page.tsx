@@ -218,7 +218,7 @@ function CheckoutContent() {
 
                                 <div className="space-y-4 mb-8">
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-gray-400">Sous-total HT</span>
+                                        <span className="text-gray-400">Pack {pack.name}</span>
                                         <span className="font-medium text-white">{pack.price}€</span>
                                     </div>
                                     {discount > 0 && (
@@ -227,13 +227,9 @@ function CheckoutContent() {
                                             <span className="font-medium">-{discount}€</span>
                                         </div>
                                     )}
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-gray-400">TVA (20%)</span>
-                                        <span className="font-medium text-white">{(totalPrice * 0.2).toFixed(2)}€</span>
-                                    </div>
                                     <div className="pt-4 border-t border-white/5 flex justify-between">
-                                        <span className="font-bold text-lg text-white">Total TTC</span>
-                                        <span className="font-black text-2xl text-gradient">{(totalPrice * 1.2).toFixed(2)}€</span>
+                                        <span className="font-bold text-lg text-white">Total à payer</span>
+                                        <span className="font-black text-2xl text-gradient">{totalPrice.toFixed(2)}€</span>
                                     </div>
                                 </div>
 
@@ -248,7 +244,7 @@ function CheckoutContent() {
 
                                     <div className={!isEmailValid ? 'opacity-50 pointer-events-none' : ''}>
                                         <PayPalButton
-                                            amount={(totalPrice * 1.2).toFixed(2)}
+                                            amount={totalPrice.toFixed(2)}
                                             email={email}
                                             briefData={{
                                                 pack_type: packKey,
