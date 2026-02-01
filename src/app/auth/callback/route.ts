@@ -4,8 +4,15 @@ import { type NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
     const { searchParams, origin } = new URL(request.url);
     const code = searchParams.get("code");
-    // if "next" is in search params, use it as the redirect URL
-    const next = searchParams.get("next") ?? "/dashboard";
+    const type = searchParams.get("type"); // Can be 'recovery', 'signup', etc.
+
+    // Default redirect - check if it's a password recovery
+    let next = searchParams.get("next") ?? "/dashboard";
+
+    // If this is a recovery (password reset) flow, redirect to reset-password page
+    if (type === "recovery") {
+        next = "/auth/reset-password";
+    }
 
     if (code) {
         const response = NextResponse.redirect(`${origin}${next}`);
@@ -34,3 +41,4 @@ export async function GET(request: NextRequest) {
     // return the user to an error page with instructions
     return NextResponse.redirect(`${origin}/auth/auth-code-error`);
 }
+

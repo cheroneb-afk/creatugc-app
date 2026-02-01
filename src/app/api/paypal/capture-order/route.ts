@@ -84,17 +84,19 @@ export async function POST(req: Request) {
                 console.log("Created new user:", userId);
 
                 // Send password reset email so user can set their password
+                console.log("Sending password reset email to:", email);
                 try {
-                    await supabaseAdmin.auth.admin.generateLink({
-                        type: "recovery",
-                        email: email,
-                        options: {
-                            redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/set-password`
-                        }
+                    const { error: resetError } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
+                        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://creatugc-app.vercel.app'}/auth/callback?type=recovery`
                     });
-                    console.log("Password reset link generated");
+
+                    if (resetError) {
+                        console.error("Error sending password reset email:", resetError);
+                    } else {
+                        console.log("Password reset email sent successfully to:", email);
+                    }
                 } catch (resetError) {
-                    console.error("Error generating password reset:", resetError);
+                    console.error("Error sending password reset email:", resetError);
                     // Don't throw - order should still be created
                 }
             }
