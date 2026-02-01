@@ -13,32 +13,38 @@ export default function ForgotPasswordPage() {
     const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isSent, setIsSent] = useState(false);
+    const [error, setError] = useState("");
     const supabase = createClient();
 
     const handleReset = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError("");
         setIsLoading(true);
         console.log("Sending password reset to:", email);
 
         try {
-            const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+            const { data, error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
                 redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
             });
 
-            console.log("Reset password response:", { data, error });
+            console.log("Reset password response:", { data, error: resetError });
+            setIsLoading(false);
 
-            if (error) {
-                console.error("Reset password error:", error);
-                alert(error.message);
-                setIsLoading(false);
+            if (resetError) {
+                console.error("Reset password error:", resetError);
+                // Handle rate limit error
+                if (resetError.status === 429) {
+                    setError("Trop de tentatives. Veuillez réessayer dans quelques minutes.");
+                } else {
+                    setError(resetError.message);
+                }
             } else {
                 console.log("Password reset email sent successfully");
                 setIsSent(true);
-                setIsLoading(false);
             }
         } catch (err) {
             console.error("Unexpected error:", err);
-            alert("Une erreur inattendue s'est produite. Veuillez réessayer.");
+            setError("Une erreur inattendue s'est produite. Veuillez réessayer.");
             setIsLoading(false);
         }
     };
@@ -68,6 +74,11 @@ export default function ForgotPasswordPage() {
                             <p className="text-gray-400 mb-8 font-medium">Entrez votre email pour recevoir un lien de réinitialisation.</p>
 
                             <form onSubmit={handleReset} className="space-y-6">
+                                {error && (
+                                    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+                                        <p className="text-red-400 text-sm">{error}</p>
+                                    </div>
+                                )}
                                 <div className="space-y-2">
                                     <Label htmlFor="email">Email</Label>
                                     <div className="relative">
