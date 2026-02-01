@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Play, Mail, Loader2, ArrowLeft, ArrowRight } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,7 +13,6 @@ export default function ForgotPasswordPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [isSent, setIsSent] = useState(false);
     const [error, setError] = useState("");
-    const supabase = createClient();
 
     const handleReset = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -23,24 +21,22 @@ export default function ForgotPasswordPage() {
         console.log("Sending password reset to:", email);
 
         try {
-            const { data, error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
+            const response = await fetch("/api/auth/forgot-password", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
             });
 
-            console.log("Reset password response:", { data, error: resetError });
+            const result = await response.json();
+            console.log("Forgot password response:", result);
             setIsLoading(false);
 
-            if (resetError) {
-                console.error("Reset password error:", resetError);
-                // Handle rate limit error
-                if (resetError.status === 429) {
-                    setError("Trop de tentatives. Veuillez réessayer dans quelques minutes.");
-                } else {
-                    setError(resetError.message);
-                }
-            } else {
-                console.log("Password reset email sent successfully");
+            if (result.success) {
+                console.log("Password reset email sent successfully via Brevo");
                 setIsSent(true);
+            } else {
+                console.error("Reset password error:", result.error);
+                setError(result.error || "Une erreur est survenue");
             }
         } catch (err) {
             console.error("Unexpected error:", err);
