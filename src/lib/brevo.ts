@@ -13,6 +13,10 @@ export async function sendEmail({ to, subject, htmlContent, templateId, params }
 
     console.log("Sending email via Brevo to:", to.map(t => t.email).join(", "));
 
+    // Use verified sender email from environment
+    const senderEmail = process.env.BREVO_SENDER_EMAIL || "hello@creatugc.com";
+    console.log("Using sender email:", senderEmail);
+
     try {
         const response = await fetch("https://api.brevo.com/v3/smtp/email", {
             method: "POST",
@@ -22,7 +26,7 @@ export async function sendEmail({ to, subject, htmlContent, templateId, params }
                 "content-type": "application/json"
             },
             body: JSON.stringify({
-                sender: { name: "CreatUGC", email: "hello@creatugc.com" },
+                sender: { name: "CreatUGC", email: senderEmail },
                 to,
                 subject,
                 htmlContent,
