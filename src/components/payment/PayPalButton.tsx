@@ -23,14 +23,31 @@ export default function PayPalButton({ amount, email, briefData, onSuccess, onPr
     const [{ isPending }] = usePayPalScriptReducer();
     const router = useRouter();
 
+    console.log("=== PAYPAL BUTTON RENDER ===");
+    console.log("Amount:", amount);
+    console.log("Email:", email);
+    console.log("BriefData:", briefData);
+
     const handleCreateOrder = async () => {
-        const response = await fetch("/api/paypal/create-order", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ amount }),
-        });
-        const order = await response.json() as { id: string };
-        return order.id;
+        console.log("=== CREATE ORDER CALLED ===");
+        console.log("Creating order with amount:", amount);
+
+        try {
+            const response = await fetch("/api/paypal/create-order", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ amount }),
+            });
+
+            console.log("Create order response status:", response.status);
+            const order = await response.json() as { id: string };
+            console.log("Created PayPal order:", order);
+
+            return order.id;
+        } catch (error) {
+            console.error("Create order error:", error);
+            throw error;
+        }
     };
 
     const handleApprove = async (data: { orderID: string }) => {
@@ -84,6 +101,7 @@ export default function PayPalButton({ amount, email, briefData, onSuccess, onPr
     };
 
     if (isPending) {
+        console.log("PayPal script is pending...");
         return (
             <div className="flex items-center justify-center p-8 glass rounded-2xl border border-white/10">
                 <Loader2 className="w-6 h-6 animate-spin text-primary" />
@@ -91,17 +109,24 @@ export default function PayPalButton({ amount, email, briefData, onSuccess, onPr
         );
     }
 
+    console.log("PayPal script loaded, rendering buttons");
+
     return (
         <div className="w-full">
             <PayPalButtons
                 style={{ layout: "vertical", color: "blue", shape: "pill", label: "pay" }}
                 createOrder={handleCreateOrder}
                 onApprove={handleApprove}
+                onCancel={() => {
+                    console.log("=== PAYMENT CANCELLED ===");
+                    toast.info("Paiement annulé");
+                }}
                 onError={(err) => {
-                    console.error("PayPal Error:", err);
+                    console.error("=== PAYPAL ERROR ===", err);
                     toast.error("Erreur avec PayPal.");
                 }}
             />
         </div>
     );
 }
+
