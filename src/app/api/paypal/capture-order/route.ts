@@ -59,6 +59,29 @@ export async function POST(req: Request) {
                 userId = existingProfile.id;
                 userEmail = existingProfile.email;
                 console.log("Found existing profile:", userId);
+
+                // Send password reset email to existing user (in case they forgot their password)
+                console.log("Sending password reset email to existing user:", email);
+                try {
+                    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+                        type: "recovery",
+                        email: email,
+                        options: {
+                            redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://creatugc-app.vercel.app'}/auth/callback?type=recovery`
+                        }
+                    });
+
+                    if (linkError) {
+                        console.error("Error generating password reset link for existing user:", linkError);
+                    } else if (linkData?.properties?.action_link) {
+                        console.log("Password reset link generated for existing user");
+                        const { sendPasswordSetupEmail } = await import("@/lib/brevo");
+                        const brevoResult = await sendPasswordSetupEmail(email, linkData.properties.action_link);
+                        console.log("Brevo result for existing user:", brevoResult);
+                    }
+                } catch (resetError) {
+                    console.error("Error sending password email to existing user:", resetError);
+                }
             } else {
                 // New email - create a new user account
                 console.log("Creating new user account for:", email);
@@ -84,7 +107,7 @@ export async function POST(req: Request) {
                 console.log("Created new user:", userId);
 
                 // Generate password reset link and send via Brevo
-                console.log("Generating password reset link for:", email);
+                console.log("Generating password reset link for new user:", email);
                 try {
                     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
                         type: "recovery",
@@ -98,10 +121,12 @@ export async function POST(req: Request) {
                         console.error("Error generating password reset link:", linkError);
                     } else if (linkData?.properties?.action_link) {
                         console.log("Password reset link generated successfully");
+                        console.log("BREVO_API_KEY exists:", !!process.env.BREVO_API_KEY);
 
                         // Send email via Brevo
                         const { sendPasswordSetupEmail } = await import("@/lib/brevo");
-                        await sendPasswordSetupEmail(email, linkData.properties.action_link);
+                        const brevoResult = await sendPasswordSetupEmail(email, linkData.properties.action_link);
+                        console.log("Brevo send result:", brevoResult);
                     } else {
                         console.error("No action_link in generateLink response:", linkData);
                     }
