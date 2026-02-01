@@ -126,9 +126,10 @@ function CheckoutContent() {
 
     return (
         <PayPalScriptProvider options={{
-            "clientId": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "",
+            clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "",
             currency: "EUR",
-            intent: "capture"
+            intent: "capture",
+            components: "buttons"
         }}>
             <div className="min-h-screen bg-background-dark py-12 px-6">
                 <div className="max-w-6xl mx-auto">
