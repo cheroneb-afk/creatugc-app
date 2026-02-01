@@ -122,7 +122,7 @@ export async function POST(req: Request) {
         console.log("Creating order in database...");
         const { data: orderData, error: orderError } = await supabaseAdmin.from("orders").insert({
             user_id: userId,
-            order_number: `ORD-${Date.now()}`,
+            order_number: Date.now(), // Integer timestamp
             pack_type: briefData.pack_type,
             video_count: videoCount,
             amount_ht: capturedAmount, // Prices are already TTC, store as-is
