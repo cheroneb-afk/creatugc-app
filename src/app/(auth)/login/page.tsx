@@ -26,7 +26,8 @@ function LoginContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const redirect = searchParams.get("redirect") || "/dashboard";
-    const [email, setEmail] = useState("");
+    const emailFromUrl = searchParams.get("email") || "";
+    const [email, setEmail] = useState(emailFromUrl);
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const supabase = createClient();

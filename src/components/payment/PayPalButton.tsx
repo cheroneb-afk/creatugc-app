@@ -50,15 +50,15 @@ export default function PayPalButton({ amount, email, briefData, onSuccess }: Pa
                 toast.success("Paiement réussi !");
                 if (onSuccess) onSuccess(capture);
 
-                // If this is a new checkout flow (no brief yet), redirect to brief creation
+                // Redirect to success page with order info
                 const dbOrderId = (capture as { dbOrderId?: string }).dbOrderId;
-                if (briefData.is_checkout && dbOrderId) {
-                    router.push(`/brief/new?orderId=${dbOrderId}`);
-                } else {
-                    router.push("/dashboard");
-                }
+                const successUrl = `/checkout/success?orderId=${dbOrderId || ""}&email=${encodeURIComponent(email || "")}`;
+
+                // Use window.location for full page redirect
+                window.location.href = successUrl;
             } else {
-                toast.error("Le paiement n'a pas pu être capturé.");
+                console.error("Capture response:", capture);
+                toast.error(capture.error || "Le paiement n'a pas pu être capturé.");
             }
         } catch (error) {
             console.error("Capture Error:", error);
