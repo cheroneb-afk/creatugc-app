@@ -16,9 +16,10 @@ interface PayPalButtonProps {
         discount_amount?: number;
     };
     onSuccess?: (details: unknown) => void;
+    onProcessing?: (isProcessing: boolean) => void;
 }
 
-export default function PayPalButton({ amount, email, briefData, onSuccess }: PayPalButtonProps) {
+export default function PayPalButton({ amount, email, briefData, onSuccess, onProcessing }: PayPalButtonProps) {
     const [{ isPending }] = usePayPalScriptReducer();
     const router = useRouter();
 
@@ -37,6 +38,9 @@ export default function PayPalButton({ amount, email, briefData, onSuccess }: Pa
         console.log("OrderID:", data.orderID);
         console.log("Email:", email);
         console.log("BriefData:", briefData);
+
+        // Notify parent that processing has started
+        if (onProcessing) onProcessing(true);
 
         try {
             console.log("Calling capture-order API...");

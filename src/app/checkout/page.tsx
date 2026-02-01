@@ -64,14 +64,36 @@ function CheckoutContent() {
     const [promoCode, setPromoCode] = useState("");
     const [discount, setDiscount] = useState(0);
     const [isEmailValid, setIsEmailValid] = useState(false);
+    const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
     const totalPrice = pack ? parseFloat(pack.price) - discount : 0;
 
+    // Store pack in localStorage as backup
     useEffect(() => {
-        if (!pack) {
-            router.push("/#pricing");
+        if (packKey) {
+            localStorage.setItem("checkout_pack", packKey);
         }
-    }, [pack, router]);
+    }, [packKey]);
+
+    useEffect(() => {
+        // Don't redirect if payment is processing
+        if (isProcessingPayment) {
+            console.log("Payment processing, skipping redirect check");
+            return;
+        }
+
+        if (!pack) {
+            // Check localStorage backup before redirecting
+            const savedPack = localStorage.getItem("checkout_pack");
+            if (savedPack && packs[savedPack as keyof typeof packs]) {
+                console.log("Restoring pack from localStorage:", savedPack);
+                router.replace(`/checkout?pack=${savedPack}`);
+            } else {
+                console.log("No pack found, redirecting to pricing");
+                router.push("/#pricing");
+            }
+        }
+    }, [pack, router, isProcessingPayment]);
 
     const validateEmail = (emailToValidate: string) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -251,6 +273,11 @@ function CheckoutContent() {
                                                 is_checkout: true,
                                                 promo_code: promoCode || undefined,
                                                 discount_amount: discount
+                                            }}
+                                            onProcessing={setIsProcessingPayment}
+                                            onSuccess={() => {
+                                                // Clear localStorage after success
+                                                localStorage.removeItem("checkout_pack");
                                             }}
                                         />
                                     </div>
