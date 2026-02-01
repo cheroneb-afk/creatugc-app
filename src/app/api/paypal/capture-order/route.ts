@@ -6,103 +6,158 @@ import { triggerN8NWorkflow } from "@/lib/n8n";
 import { sendOrderConfirmationEmail } from "@/lib/brevo";
 
 export async function POST(req: Request) {
+    console.log("=== CAPTURE ORDER START ===");
+
     try {
         const { orderID, briefData, email } = await req.json();
+        console.log("Request body:", { orderID, briefData, email });
+
+        // Capture the PayPal order
+        console.log("Capturing PayPal order...");
         const capture = await capturePayPalOrder(orderID);
+        console.log("PayPal capture response status:", capture.status);
 
-        if (capture.status === "COMPLETED") {
-            const supabase = await createClient();
-            const supabaseAdmin = createAdminClient();
+        if (capture.status !== "COMPLETED") {
+            console.error("PayPal capture not completed:", capture);
+            return NextResponse.json({
+                error: "Payment not completed",
+                status: capture.status
+            }, { status: 400 });
+        }
 
-            let userId: string;
-            let userEmail: string;
-            let isNewUser = false;
+        const supabase = await createClient();
+        const supabaseAdmin = createAdminClient();
 
-            // First, check if user is authenticated (returning customer who logged in)
-            const { data: { user: authenticatedUser } } = await supabase.auth.getUser();
+        let userId: string;
+        let userEmail: string;
+        let isNewUser = false;
 
-            if (authenticatedUser) {
-                // User is logged in - use their ID
-                userId = authenticatedUser.id;
-                userEmail = authenticatedUser.email!;
-            } else if (email) {
-                // Anonymous checkout - check if email exists in profiles
-                const { data: existingProfile } = await supabaseAdmin
-                    .from("profiles")
-                    .select("id, email")
-                    .eq("email", email)
-                    .single();
+        // First, check if user is authenticated (returning customer who logged in)
+        const { data: { user: authenticatedUser } } = await supabase.auth.getUser();
+        console.log("Authenticated user:", authenticatedUser?.id || "none");
 
-                if (existingProfile) {
-                    // Email exists - link order to existing account
-                    userId = existingProfile.id;
-                    userEmail = existingProfile.email;
-                } else {
-                    // New email - create a new user account
-                    const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
-                        email: email,
-                        email_confirm: true,
-                        user_metadata: {
-                            created_via: "checkout"
-                        }
-                    });
+        if (authenticatedUser) {
+            // User is logged in - use their ID
+            userId = authenticatedUser.id;
+            userEmail = authenticatedUser.email!;
+            console.log("Using authenticated user:", userId);
+        } else if (email) {
+            // Anonymous checkout - check if email exists in profiles
+            console.log("Checking for existing profile with email:", email);
+            const { data: existingProfile, error: profileError } = await supabaseAdmin
+                .from("profiles")
+                .select("id, email")
+                .eq("email", email)
+                .single();
 
-                    if (createError || !newUser.user) {
-                        console.error("Error creating user:", createError);
-                        throw new Error("Failed to create user account");
+            if (profileError && profileError.code !== "PGRST116") {
+                console.error("Error checking profile:", profileError);
+            }
+
+            if (existingProfile) {
+                // Email exists - link order to existing account
+                userId = existingProfile.id;
+                userEmail = existingProfile.email;
+                console.log("Found existing profile:", userId);
+            } else {
+                // New email - create a new user account
+                console.log("Creating new user account for:", email);
+                const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
+                    email: email,
+                    email_confirm: true,
+                    user_metadata: {
+                        created_via: "checkout"
                     }
+                });
 
-                    userId = newUser.user.id;
-                    userEmail = email;
-                    isNewUser = true;
+                if (createError || !newUser.user) {
+                    console.error("Error creating user:", createError);
+                    return NextResponse.json({
+                        error: "Failed to create user account",
+                        details: createError?.message
+                    }, { status: 500 });
+                }
 
-                    // Send password reset email so user can set their password
-                    const { error: resetError } = await supabaseAdmin.auth.admin.generateLink({
+                userId = newUser.user.id;
+                userEmail = email;
+                isNewUser = true;
+                console.log("Created new user:", userId);
+
+                // Send password reset email so user can set their password
+                try {
+                    await supabaseAdmin.auth.admin.generateLink({
                         type: "recovery",
                         email: email,
                         options: {
                             redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/set-password`
                         }
                     });
-
-                    if (resetError) {
-                        console.error("Error sending password reset email:", resetError);
-                        // Don't throw - order should still be created
-                    }
+                    console.log("Password reset link generated");
+                } catch (resetError) {
+                    console.error("Error generating password reset:", resetError);
+                    // Don't throw - order should still be created
                 }
-            } else {
-                throw new Error("No authenticated user and no email provided");
             }
+        } else {
+            console.error("No authenticated user and no email provided");
+            return NextResponse.json({
+                error: "No authenticated user and no email provided"
+            }, { status: 400 });
+        }
 
-            // Create order in database
-            const { data: orderData, error: orderError } = await supabaseAdmin.from("orders").insert({
-                user_id: userId,
-                order_number: `ORD-${Date.now()}`,
-                pack_type: briefData.pack_type,
-                video_count: briefData.pack_type === "solo" ? 1 : briefData.pack_type === "starter" ? 4 : briefData.pack_type === "pro" ? 5 : 10,
-                amount_ht: Number(capture.purchase_units[0].payments.captures[0].amount.value) / 1.2,
-                amount_ttc: Number(capture.purchase_units[0].payments.captures[0].amount.value),
-                payment_method: "paypal",
-                payment_id: orderID,
-                paypal_order_id: orderID,
-                paypal_capture_id: capture.purchase_units[0].payments.captures[0].id,
-                payment_status: "paid",
-                status: "processing",
-                promo_code: briefData.promo_code || null,
-                discount_amount: briefData.discount_amount || 0
-            }).select().single();
+        // Get the captured amount (already TTC - no TVA calculation needed)
+        const capturedAmount = Number(capture.purchase_units[0].payments.captures[0].amount.value);
+        console.log("Captured amount (TTC):", capturedAmount);
 
-            if (orderError) throw orderError;
+        // Determine video count based on pack type
+        const packVideoCounts: Record<string, number> = {
+            solo: 1,
+            starter: 4,
+            pro: 5,
+            agency: 10
+        };
+        const videoCount = packVideoCounts[briefData.pack_type] || 1;
 
-            // Update brief with order_id and status (only if brief already exists)
-            if (briefData.id) {
-                const { data: updatedBrief } = await supabaseAdmin.from("video_briefs").update({
-                    order_id: orderData.id,
-                    status: "paid"
-                }).eq("id", briefData.id).select().single();
+        // Create order in database
+        console.log("Creating order in database...");
+        const { data: orderData, error: orderError } = await supabaseAdmin.from("orders").insert({
+            user_id: userId,
+            order_number: `ORD-${Date.now()}`,
+            pack_type: briefData.pack_type,
+            video_count: videoCount,
+            amount_ht: capturedAmount, // Prices are already TTC, store as-is
+            amount_ttc: capturedAmount,
+            payment_method: "paypal",
+            payment_id: orderID,
+            paypal_order_id: orderID,
+            paypal_capture_id: capture.purchase_units[0].payments.captures[0].id,
+            payment_status: "paid",
+            status: "processing",
+            promo_code: briefData.promo_code || null,
+            discount_amount: briefData.discount_amount || 0
+        }).select().single();
 
+        if (orderError) {
+            console.error("Error creating order:", orderError);
+            return NextResponse.json({
+                error: "Failed to create order",
+                details: orderError.message
+            }, { status: 500 });
+        }
+        console.log("Order created:", orderData.id, orderData.order_number);
+
+        // Update brief with order_id and status (only if brief already exists)
+        if (briefData.id) {
+            console.log("Updating existing brief:", briefData.id);
+            const { data: updatedBrief, error: briefError } = await supabaseAdmin.from("video_briefs").update({
+                order_id: orderData.id,
+                status: "paid"
+            }).eq("id", briefData.id).select().single();
+
+            if (briefError) {
+                console.error("Error updating brief:", briefError);
+            } else if (updatedBrief) {
                 // Create video placeholders in generated_videos
-                const videoCount = orderData.video_count || 1;
                 const placeholders = Array.from({ length: videoCount }).map(() => ({
                     user_id: userId,
                     brief_id: updatedBrief.id,
@@ -118,28 +173,42 @@ export async function POST(req: Request) {
                 if (genError) console.error("Error creating video placeholders:", genError);
 
                 // Trigger n8n workflow for video generation
-                await triggerN8NWorkflow({
-                    order: orderData,
-                    brief: updatedBrief,
-                    user: { id: userId, email: userEmail },
-                    video_placeholders: generatedVideos || []
-                });
+                try {
+                    await triggerN8NWorkflow({
+                        order: orderData,
+                        brief: updatedBrief,
+                        user: { id: userId, email: userEmail },
+                        video_placeholders: generatedVideos || []
+                    });
+                    console.log("N8N workflow triggered");
+                } catch (n8nError) {
+                    console.error("N8N workflow error:", n8nError);
+                }
             }
-
-            // Send confirmation email
-            await sendOrderConfirmationEmail(userEmail, orderData.order_number);
-
-            return NextResponse.json({
-                ...capture,
-                dbOrderId: orderData.id,
-                orderNumber: orderData.order_number,
-                isNewUser
-            });
         }
 
-        return NextResponse.json(capture);
+        // Send confirmation email
+        try {
+            await sendOrderConfirmationEmail(userEmail, orderData.order_number);
+            console.log("Confirmation email sent");
+        } catch (emailError) {
+            console.error("Error sending confirmation email:", emailError);
+            // Don't throw - order is already created
+        }
+
+        console.log("=== CAPTURE ORDER SUCCESS ===");
+        return NextResponse.json({
+            status: "COMPLETED",
+            dbOrderId: orderData.id,
+            orderNumber: orderData.order_number,
+            isNewUser
+        });
+
     } catch (error) {
-        console.error("PayPal Capture Order Error:", error);
-        return NextResponse.json({ error: "Failed to capture order" }, { status: 500 });
+        console.error("=== CAPTURE ORDER ERROR ===", error);
+        return NextResponse.json({
+            error: "Failed to capture order",
+            details: error instanceof Error ? error.message : String(error)
+        }, { status: 500 });
     }
 }
