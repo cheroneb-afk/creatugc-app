@@ -20,11 +20,46 @@ export default function ResetPasswordPage() {
 
     useEffect(() => {
         // Check if user has a valid session from the reset link
-        const checkSession = async () => {
+        const handleRecovery = async () => {
+            const hash = window.location.hash;
+            console.log("Reset password page - hash:", hash);
+
+            // If we have tokens in the hash, try to establish session
+            if (hash && hash.includes("access_token")) {
+                console.log("Found tokens in hash, establishing session...");
+                const params = new URLSearchParams(hash.substring(1));
+                const accessToken = params.get("access_token");
+                const refreshToken = params.get("refresh_token");
+                const type = params.get("type");
+
+                console.log("Token type:", type);
+
+                if (accessToken && refreshToken) {
+                    const { data, error } = await supabase.auth.setSession({
+                        access_token: accessToken,
+                        refresh_token: refreshToken,
+                    });
+
+                    if (error) {
+                        console.error("Session error:", error);
+                        setIsValidSession(false);
+                    } else {
+                        console.log("Session established successfully");
+                        setIsValidSession(true);
+                        // Clear hash from URL
+                        window.history.replaceState(null, "", window.location.pathname);
+                    }
+                    return;
+                }
+            }
+
+            // Fallback: check existing session
             const { data: { session } } = await supabase.auth.getSession();
+            console.log("Existing session:", !!session);
             setIsValidSession(!!session);
         };
-        checkSession();
+
+        handleRecovery();
     }, [supabase.auth]);
 
     const handleSubmit = async (e: React.FormEvent) => {
