@@ -1,5 +1,8 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
+
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,8 +40,8 @@ export default function DashboardPage() {
 
                 if (orders) {
                     const totalOrders = orders.length;
-                    const processingOrders = orders.filter(o => o.status === "processing").length;
-                    const completedVideos = orders.filter(o => o.status === "completed").length;
+                    const processingOrders = orders.filter((o: any) => o.status === "processing").length;
+                    const completedVideos = orders.filter((o: any) => o.status === "completed").length;
 
                     setStats([
                         { name: "Vidéos commandées", value: completedVideos.toString(), icon: Video, color: "text-blue-500" },
@@ -47,7 +50,7 @@ export default function DashboardPage() {
                         { name: "Crédits restants", value: "10", icon: CreditCard, color: "text-secondary" }, // Assuming 10 for now or fetch from user profile
                     ]);
 
-                    setRecentOrders(orders.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5));
+                    setRecentOrders(orders.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5));
                 }
             }
             setLoading(false);

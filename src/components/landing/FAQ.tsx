@@ -31,11 +31,20 @@ export default function FAQ() {
     const [openIndex, setOpenIndex] = useState<number | null>(0);
 
     return (
-        <section id="faq" className="py-24">
+        <section id="faq" className="py-24 bg-background-dark/50">
             <div className="container mx-auto px-6 max-w-4xl">
-                <div className="text-center mb-16">
-                    <h2 className="text-4xl font-bold mb-4">Questions Fréquentes</h2>
-                    <p className="text-gray-400">Tout ce que vous devez savoir sur CreatUGC.</p>
+                <div className="text-center max-w-3xl mx-auto mb-20">
+                    <motion.h2
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="text-4xl md:text-5xl font-black tracking-tighter mb-6 text-white uppercase italic"
+                    >
+                        Questions <span className="text-primary">Fréquentes</span>
+                    </motion.h2>
+                    <p className="text-gray-400 text-lg">
+                        Tout ce que vous devez savoir sur CreatUGC.
+                    </p>
                 </div>
 
                 <div className="space-y-4">
@@ -45,23 +54,33 @@ export default function FAQ() {
                             initial={{ opacity: 0, y: 10 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            className="glass rounded-2xl overflow-hidden"
+                            className={`glass rounded-[32px] border-white/5 overflow-hidden transition-all ${openIndex === index ? "border-primary/20 ring-1 ring-primary/10" : "hover:border-primary/10"}`}
                         >
                             <button
-                                className="w-full px-8 py-6 flex items-center justify-between text-left"
+                                className="w-full px-10 py-8 flex items-center justify-between text-left group"
                                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
                             >
-                                <span className="text-lg font-bold">{faq.question}</span>
-                                {openIndex === index ? (
-                                    <Minus className="w-5 h-5 text-secondary" />
-                                ) : (
-                                    <Plus className="w-5 h-5 text-primary" />
-                                )}
+                                <span className={`text-xl font-black uppercase tracking-tight transition-colors ${openIndex === index ? "text-primary" : "text-white group-hover:text-primary/70"}`}>
+                                    {faq.question}
+                                </span>
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${openIndex === index ? "bg-primary text-white rotate-180" : "bg-white/5 text-primary group-hover:bg-primary/20"}`}>
+                                    {openIndex === index ? (
+                                        <Minus className="w-4 h-4" />
+                                    ) : (
+                                        <Plus className="w-4 h-4" />
+                                    )}
+                                </div>
                             </button>
                             {openIndex === index && (
-                                <div className="px-8 pb-6 text-gray-400 leading-relaxed">
-                                    {faq.answer}
-                                </div>
+                                <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: "auto", opacity: 1 }}
+                                    className="px-10 pb-8 text-gray-400 font-medium leading-relaxed"
+                                >
+                                    <div className="pt-2 border-t border-white/5">
+                                        {faq.answer}
+                                    </div>
+                                </motion.div>
                             )}
                         </motion.div>
                     ))}

@@ -28,26 +28,20 @@ const problems = [
 
 export default function Problem() {
     return (
-        <section className="py-24 relative overflow-hidden bg-background-dark/50">
+        <section id="problem" className="py-24 relative overflow-hidden bg-background-dark">
             <div className="container mx-auto px-6">
-                <div className="text-center mb-16">
+                <div className="text-center max-w-3xl mx-auto mb-20">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-4xl md:text-5xl font-bold mb-6"
+                        className="text-4xl md:text-5xl font-black tracking-tighter mb-6 text-white uppercase italic"
                     >
-                        Vous en avez assez de <span className="text-red-500">perdre du temps et de l&apos;argent</span> ?
+                        Le modèle actuel est <span className="text-red-500 underline decoration-red-500/30 underline-offset-8">Cassé</span>
                     </motion.h2>
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.1 }}
-                        className="text-gray-400 max-w-2xl mx-auto"
-                    >
-                        Le modèle traditionnel de création de contenu UGC est cassé. Nous l&apos;avons réparé.
-                    </motion.p>
+                    <p className="text-gray-400 text-lg">
+                        Pourquoi continuer à perdre du temps et de l&apos;argent avec des méthodes obsolètes ?
+                    </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -58,16 +52,16 @@ export default function Problem() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: index * 0.1 }}
-                            className="p-8 rounded-3xl glass-card border-red-500/10 hover:border-red-500/30 transition-all group"
+                            className="glass p-10 rounded-[32px] border-red-500/5 hover:border-red-500/20 transition-all group"
                         >
-                            <div className="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                                <problem.icon className="w-6 h-6 text-red-500" />
+                            <div className="w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-red-500/5">
+                                <problem.icon className="w-8 h-8 text-red-500" />
                             </div>
-                            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                                <XCircle className="w-4 h-4 text-red-500" />
+                            <h3 className="text-2xl font-black text-white mb-4 uppercase tracking-tight flex items-center gap-3">
+                                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
                                 {problem.title}
                             </h3>
-                            <p className="text-gray-400 leading-relaxed">
+                            <p className="text-gray-400 leading-relaxed font-medium text-sm">
                                 {problem.description}
                             </p>
                         </motion.div>

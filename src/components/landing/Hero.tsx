@@ -18,83 +18,99 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full glass border-white/10 mb-8"
+                    className="inline-flex items-center space-x-2 px-4 py-2 rounded-full glass border-white/10 mb-8"
                 >
-                    <span className="text-xs font-semibold tracking-wide uppercase text-gray-300">
-                        +150 marques nous font confiance
+                    <div className="flex -space-x-2 mr-2">
+                        {[1, 2, 3, 4].map((i) => (
+                            <div key={i} className="w-8 h-8 rounded-full border-2 border-background-dark bg-slate-800" />
+                        ))}
+                    </div>
+                    <span className="text-xs md:text-sm font-semibold text-gray-300">
+                        +85,000 clients nous font confiance
                     </span>
+                    <div className="ml-2 flex items-center gap-0.5">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                            <svg key={i} className="w-3 h-3 text-yellow-500 fill-current" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        ))}
+                    </div>
                 </motion.div>
 
                 <motion.h1
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.1 }}
-                    className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-8 leading-[1.1]"
+                    className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-8 leading-[1.1] text-white"
                 >
-                    Des vidéos <span className="text-gradient">UGC qui convertissent</span>, <br className="hidden md:block" /> livrées en 48h
+                    Transformez vos produits <br /> en <span className="text-gradient">UGC qui vendent</span>
                 </motion.h1>
 
                 <motion.p
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
-                    className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed"
+                    className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto mb-10 leading-relaxed"
                 >
-                    Obtenez des vidéos authentiques pour vos publicités Meta & TikTok, sans les délais et les coûts d&apos;un créateur traditionnel.
+                    Boostez votre ROAS avec des vidéos authentiques, performantes et livrées en un temps record. La solution numéro 1 pour l&apos;e-commerce et les marques DTC.
                 </motion.p>
 
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.3 }}
-                    className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6"
+                    className="flex flex-col sm:flex-row items-center justify-center gap-4 px-6 mb-20"
                 >
                     <Link
-                        href="#pricing"
-                        className="group relative px-8 py-4 rounded-2xl bg-gradient-to-r from-primary to-secondary text-white font-bold text-lg shadow-xl shadow-primary/25 hover:scale-105 transition-all duration-300 overflow-hidden"
+                        href="/checkout"
+                        className="w-full sm:w-auto px-10 py-5 bg-primary text-white font-black rounded-full text-lg hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/20 uppercase tracking-tight italic"
                     >
-                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                        <span className="relative flex items-center">
-                            Voir les tarifs <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                        </span>
+                        Commander ma vidéo
                     </Link>
                     <Link
                         href="#demo"
-                        className="flex items-center space-x-2 px-8 py-4 rounded-2xl glass hover:bg-white/5 transition-all font-bold text-lg"
+                        className="w-full sm:w-auto px-10 py-5 glass border-white/10 text-white font-black rounded-full text-lg hover:bg-white/5 transition-all uppercase tracking-tight italic"
                     >
-                        <Play className="w-5 h-5 fill-white" />
-                        <span>Voir des exemples</span>
+                        Voir les exemples
                     </Link>
                 </motion.div>
 
-                {/* Video Preview / Social Proof */}
+                {/* Video Showcase Section */}
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.7, delay: 0.5 }}
-                    className="mt-20 relative max-w-5xl mx-auto"
+                    transition={{ duration: 0.8, delay: 0.4 }}
+                    className="relative max-w-6xl mx-auto"
                 >
-                    <div className="aspect-video glass rounded-3xl p-2 relative overflow-hidden group">
-                        <div className="w-full h-full bg-slate-900 rounded-2xl flex items-center justify-center overflow-hidden">
-                            {/* Image Placeholder with prompt style */}
-                            <div className="absolute inset-0 bg-slate-800 animate-pulse flex flex-col items-center justify-center text-gray-500">
-                                <Video className="w-16 h-16 mb-4 opacity-20" />
-                                <span className="text-sm font-medium tracking-widest uppercase opacity-40">CreatUGC Production en cours...</span>
-                            </div>
-                            <div className="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent opacity-60" />
-                            <div className="absolute bottom-6 left-6 text-left">
-                                <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-widest text-secondary mb-2">
-                                    <div className="w-2 h-2 rounded-full bg-secondary animate-ping" />
-                                    <span>Vidéo Témoignage Produit...</span>
+                    <div className="relative aspect-video rounded-[40px] overflow-hidden glass border-4 border-white/5 shadow-2xl group">
+                        {/* Video Placeholder with Overlay */}
+                        <div className="absolute inset-0 bg-slate-900 flex items-center justify-center">
+                            <div className="absolute inset-0 bg-gradient-to-t from-background-dark/80 via-transparent to-transparent z-10" />
+                            <div className="flex flex-col items-center gap-4 z-20">
+                                <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center animate-pulse">
+                                    <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center">
+                                        <Play className="w-6 h-6 text-white fill-current ml-1" />
+                                    </div>
                                 </div>
-                                <h3 className="text-xl font-bold">Générez n&apos;importe quel style de vidéo UGC pour votre marque.</h3>
+                                <span className="text-white/50 text-sm font-bold tracking-widest uppercase italic">Nos créations en action</span>
+                            </div>
+                        </div>
+
+                        {/* Social Proof Badges over Video */}
+                        <div className="absolute transition-all bottom-8 left-8 z-30 flex flex-col gap-2">
+                            <div className="p-3 glass rounded-2xl border-white/10 backdrop-blur-xl max-w-[220px] animate-bounce-slow">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                                    <span className="text-[10px] uppercase font-black text-white/70 italic">Ventes en direct</span>
+                                </div>
+                                <p className="text-xs font-bold text-white">+1,240€ générés il y a 5 min</p>
                             </div>
                         </div>
                     </div>
 
-                    {/* Decorative elements */}
-                    <div className="absolute -top-6 -right-6 w-12 h-12 bg-secondary rounded-full blur-2xl animate-bounce" />
-                    <div className="absolute -bottom-8 -left-8 w-16 h-16 bg-primary rounded-full blur-3xl animate-pulse" />
+                    {/* Decorative Elements */}
+                    <div className="absolute -top-10 -left-10 w-40 h-40 bg-primary/20 rounded-full blur-[80px] -z-10" />
+                    <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-secondary/20 rounded-full blur-[80px] -z-10" />
                 </motion.div>
             </div>
         </section>

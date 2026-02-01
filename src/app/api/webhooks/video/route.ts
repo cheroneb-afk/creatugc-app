@@ -35,7 +35,7 @@ export async function POST(req: Request) {
                 .select("status")
                 .eq("brief_id", data.brief_id);
 
-            if (allVideos && allVideos.every(v => v.status === "ready")) {
+            if (allVideos && allVideos.every((v: any) => v.status === "ready")) {
                 await supabase
                     .from("video_briefs")
                     .update({ status: "completed" })

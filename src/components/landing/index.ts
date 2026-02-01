@@ -7,3 +7,6 @@ export { default as Examples } from "./Examples";
 export { default as Pricing } from "./Pricing";
 export { default as FAQ } from "./FAQ";
 export { default as Footer } from "./Footer";
+export { default as Marquee } from "./Marquee";
+export { default as Stats } from "./Stats";
+export { default as TargetAudience } from "./TargetAudience";
