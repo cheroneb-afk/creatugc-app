@@ -70,8 +70,8 @@ function LoginContent() {
                 </Link>
 
                 <div className="glass-card p-10 rounded-3xl shadow-2xl relative">
-                    <h1 className="text-3xl font-bold mb-2">Bon retour !</h1>
-                    <p className="text-gray-400 mb-8 font-medium">Connectez-vous pour gérer vos campagnes UGC.</p>
+                    <h1 className="text-3xl font-bold mb-2">Connexion</h1>
+                    <p className="text-gray-400 mb-8 font-medium">Accédez à votre espace client</p>
 
                     <form onSubmit={handleLogin} className="space-y-6">
                         <div className="space-y-2">
@@ -91,12 +91,7 @@ function LoginContent() {
                         </div>
 
                         <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <Label htmlFor="password">Mot de passe</Label>
-                                <Link href="/forgot-password" title="Mot de passe oublié ?" className="text-xs text-primary hover:underline">
-                                    Mot de passe oublié ?
-                                </Link>
-                            </div>
+                            <Label htmlFor="password">Mot de passe</Label>
                             <div className="relative">
                                 <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-500" />
                                 <Input
@@ -124,17 +119,14 @@ function LoginContent() {
                                 </span>
                             )}
                         </Button>
-                    </form>
 
-                    <footer className="mt-8 text-center text-sm">
-                        <span className="text-gray-500">Pas encore de compte ?</span>{" "}
-                        <Link
-                            href={`/register${searchParams.get("redirect") ? `?redirect=${searchParams.get("redirect")}` : ""}`}
-                            className="text-primary font-bold hover:underline"
-                        >
-                            S&apos;inscrire gratuitement
-                        </Link>
-                    </footer>
+                        {/* Lien mot de passe oublié */}
+                        <div className="text-center pt-2">
+                            <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+                                Mot de passe oublié ?
+                            </Link>
+                        </div>
+                    </form>
                 </div>
             </motion.div>
         </div>
