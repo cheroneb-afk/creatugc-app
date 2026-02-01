@@ -33,7 +33,13 @@ export default function PayPalButton({ amount, email, briefData, onSuccess }: Pa
     };
 
     const handleApprove = async (data: { orderID: string }) => {
+        console.log("=== PAYPAL APPROVE START ===");
+        console.log("OrderID:", data.orderID);
+        console.log("Email:", email);
+        console.log("BriefData:", briefData);
+
         try {
+            console.log("Calling capture-order API...");
             const response = await fetch("/api/paypal/capture-order", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -44,24 +50,31 @@ export default function PayPalButton({ amount, email, briefData, onSuccess }: Pa
                 }),
             });
 
+            console.log("API Response status:", response.status);
             const capture = await response.json();
+            console.log("API Response body:", capture);
 
-            if (capture.status === "COMPLETED") {
+            // Check for success - API returns status: "COMPLETED"
+            if (capture.status === "COMPLETED" && capture.dbOrderId) {
+                console.log("=== PAYMENT SUCCESS ===");
                 toast.success("Paiement réussi !");
                 if (onSuccess) onSuccess(capture);
 
-                // Redirect to success page with order info
-                const dbOrderId = (capture as { dbOrderId?: string }).dbOrderId;
-                const successUrl = `/checkout/success?orderId=${dbOrderId || ""}&email=${encodeURIComponent(email || "")}`;
+                // Build success URL
+                const successUrl = `/checkout/success?orderId=${capture.dbOrderId}&email=${encodeURIComponent(email || "")}`;
+                console.log("Redirecting to:", successUrl);
 
                 // Use window.location for full page redirect
                 window.location.href = successUrl;
             } else {
-                console.error("Capture response:", capture);
-                toast.error(capture.error || "Le paiement n'a pas pu être capturé.");
+                console.error("=== PAYMENT FAILED ===");
+                console.error("Status:", capture.status);
+                console.error("Error:", capture.error);
+                console.error("Details:", capture.details);
+                toast.error(capture.error || capture.details || "Le paiement n'a pas pu être capturé.");
             }
         } catch (error) {
-            console.error("Capture Error:", error);
+            console.error("=== CAPTURE ERROR ===", error);
             toast.error("Erreur lors de la capture du paiement.");
         }
     };
