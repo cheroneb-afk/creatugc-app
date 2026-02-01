@@ -83,20 +83,30 @@ export async function POST(req: Request) {
                 isNewUser = true;
                 console.log("Created new user:", userId);
 
-                // Send password reset email so user can set their password
-                console.log("Sending password reset email to:", email);
+                // Generate password reset link and send via Brevo
+                console.log("Generating password reset link for:", email);
                 try {
-                    const { error: resetError } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
-                        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://creatugc-app.vercel.app'}/auth/callback?type=recovery`
+                    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+                        type: "recovery",
+                        email: email,
+                        options: {
+                            redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://creatugc-app.vercel.app'}/auth/callback?type=recovery`
+                        }
                     });
 
-                    if (resetError) {
-                        console.error("Error sending password reset email:", resetError);
+                    if (linkError) {
+                        console.error("Error generating password reset link:", linkError);
+                    } else if (linkData?.properties?.action_link) {
+                        console.log("Password reset link generated successfully");
+
+                        // Send email via Brevo
+                        const { sendPasswordSetupEmail } = await import("@/lib/brevo");
+                        await sendPasswordSetupEmail(email, linkData.properties.action_link);
                     } else {
-                        console.log("Password reset email sent successfully to:", email);
+                        console.error("No action_link in generateLink response:", linkData);
                     }
                 } catch (resetError) {
-                    console.error("Error sending password reset email:", resetError);
+                    console.error("Error in password reset flow:", resetError);
                     // Don't throw - order should still be created
                 }
             }
