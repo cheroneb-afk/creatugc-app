@@ -15,6 +15,7 @@ export type BriefFormData = {
     formats: string[];
     with_subtitles: boolean;
     pack_type?: string;
+    order_id?: string;
 };
 
 export const VIDEO_STYLES = [

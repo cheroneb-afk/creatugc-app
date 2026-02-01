@@ -7,15 +7,18 @@ import { useRouter } from "next/navigation";
 
 interface PayPalButtonProps {
     amount: string;
+    email?: string;
     briefData: {
         pack_type?: string;
         is_checkout?: boolean;
         id?: string;
+        promo_code?: string;
+        discount_amount?: number;
     };
     onSuccess?: (details: unknown) => void;
 }
 
-export default function PayPalButton({ amount, briefData, onSuccess }: PayPalButtonProps) {
+export default function PayPalButton({ amount, email, briefData, onSuccess }: PayPalButtonProps) {
     const [{ isPending }] = usePayPalScriptReducer();
     const router = useRouter();
 
@@ -36,7 +39,8 @@ export default function PayPalButton({ amount, briefData, onSuccess }: PayPalBut
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     orderID: data.orderID,
-                    briefData
+                    briefData,
+                    email
                 }),
             });
 
