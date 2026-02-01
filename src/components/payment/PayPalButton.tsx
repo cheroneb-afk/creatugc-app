@@ -73,16 +73,20 @@ export default function PayPalButton({ amount, email, briefData, onSuccess, onPr
 
             console.log("API Response status:", response.status);
             const capture = await response.json();
-            console.log("API Response body:", capture);
+            console.log("API Response body:", JSON.stringify(capture));
 
-            // Check for success - API returns status: "COMPLETED"
-            if (capture.status === "COMPLETED" && capture.dbOrderId) {
+            // Check for success - API returns success: true AND status: "COMPLETED"
+            const captureOrderId = capture.orderId || capture.dbOrderId;
+            const isSuccess = (capture.success === true || capture.status === "COMPLETED") && captureOrderId;
+
+            if (isSuccess) {
                 console.log("=== PAYMENT SUCCESS ===");
+                console.log("Order ID:", captureOrderId);
                 toast.success("Paiement réussi !");
                 if (onSuccess) onSuccess(capture);
 
                 // Build success URL
-                const successUrl = `/checkout/success?orderId=${capture.dbOrderId}&email=${encodeURIComponent(email || "")}`;
+                const successUrl = `/checkout/success?orderId=${captureOrderId}&email=${encodeURIComponent(capture.email || email || "")}`;
                 console.log("Redirecting to:", successUrl);
 
                 // Use window.location for full page redirect

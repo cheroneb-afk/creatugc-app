@@ -207,13 +207,20 @@ export async function POST(req: Request) {
             // Don't throw - order is already created
         }
 
-        console.log("=== CAPTURE ORDER SUCCESS ===");
-        return NextResponse.json({
+        const responseData = {
+            success: true,
             status: "COMPLETED",
+            orderId: orderData.id,
             dbOrderId: orderData.id,
             orderNumber: orderData.order_number,
+            email: userEmail,
             isNewUser
-        });
+        };
+
+        console.log("=== CAPTURE ORDER SUCCESS ===");
+        console.log("Sending response:", JSON.stringify(responseData));
+
+        return NextResponse.json(responseData);
 
     } catch (error) {
         console.error("=== CAPTURE ORDER ERROR ===", error);
