@@ -18,16 +18,27 @@ export default function ForgotPasswordPage() {
     const handleReset = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
+        console.log("Sending password reset to:", email);
 
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
-        });
+        try {
+            const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
+            });
 
-        if (error) {
-            alert(error.message);
-            setIsLoading(false);
-        } else {
-            setIsSent(true);
+            console.log("Reset password response:", { data, error });
+
+            if (error) {
+                console.error("Reset password error:", error);
+                alert(error.message);
+                setIsLoading(false);
+            } else {
+                console.log("Password reset email sent successfully");
+                setIsSent(true);
+                setIsLoading(false);
+            }
+        } catch (err) {
+            console.error("Unexpected error:", err);
+            alert("Une erreur inattendue s'est produite. Veuillez réessayer.");
             setIsLoading(false);
         }
     };
